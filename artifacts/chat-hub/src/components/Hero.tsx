@@ -1,13 +1,43 @@
 import { useLanguage } from '@/contexts/LanguageContext';
-import { ScrollReveal } from './ScrollReveal';
 import { Link } from 'wouter';
-import { motion } from 'framer-motion';
+import { motion, useScroll, useTransform } from 'framer-motion';
 import { useUser } from '@clerk/react';
-import { Heart } from 'lucide-react';
+import { Heart, ArrowRight, Sparkles, ArrowLeft } from 'lucide-react';
+import { useMemo, useRef } from 'react';
+
+const PARTICLE_COUNT = 14;
 
 export function Hero() {
   const { t, isRtl } = useLanguage();
   const { isSignedIn } = useUser();
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  // Precompute stable particle geometry once so re-renders (language switch,
+  // auth state, etc.) don't jump/restart the animation or force re-layout.
+  const particles = useMemo(
+    () =>
+      Array.from({ length: PARTICLE_COUNT }, () => ({
+        size: Math.random() * 3 + 1,
+        left: Math.random() * 100,
+        top: Math.random() * 100,
+        rise: 150 + Math.random() * 100,
+        drift: (Math.random() - 0.5) * 80,
+        peakOpacity: Math.random() * 0.5 + 0.2,
+        duration: Math.random() * 8 + 7,
+        delay: Math.random() * 5,
+      })),
+    []
+  );
+  
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start start", "end start"]
+  });
+
+  // Parallax effects
+  const yBg = useTransform(scrollYProgress, [0, 1], ["0%", "40%"]);
+  const yText = useTransform(scrollYProgress, [0, 1], ["0%", "60%"]);
+  const opacityText = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
 
   const pills = [
     t('pill.meaning'),
@@ -19,131 +49,205 @@ export function Hero() {
   ];
 
   return (
-    <section
-      className="relative min-h-[92dvh] flex flex-col items-center justify-center text-center px-5 sm:px-6 pt-24 overflow-hidden"
+    <section 
+      ref={containerRef}
+      className="relative min-h-[100dvh] flex items-center justify-center overflow-hidden bg-background"
       dir={isRtl ? 'rtl' : 'ltr'}
     >
-      {/* Background effects */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-[radial-gradient(ellipse,hsl(var(--primary)/0.13),transparent_60%)] blur-3xl" />
-        <div className="absolute bottom-20 left-10 w-56 h-56 bg-[radial-gradient(ellipse,hsl(220_80%_60%/0.06),transparent_70%)] blur-2xl" />
-        <div className="absolute top-40 right-10 w-44 h-44 bg-[radial-gradient(ellipse,hsl(var(--primary)/0.08),transparent_70%)] blur-2xl" />
-        {/* Subtle floating particles */}
-        {[...Array(5)].map((_, i) => (
+      {/* Background Imagery & Parallax */}
+      <motion.div 
+        className="absolute inset-0 z-0"
+        style={{ y: yBg }}
+      >
+        {/* Main Desert Background */}
+        <div 
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{ backgroundImage: `url('/hero_desert.jpg')` }}
+        />
+        
+        {/* Geometric Accent Overlay */}
+        <div 
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-40 mix-blend-color-dodge"
+          style={{ 
+            backgroundImage: `url('/hero_geometric.jpg')`,
+            maskImage: 'linear-gradient(to bottom, black 20%, transparent 80%)',
+            WebkitMaskImage: 'linear-gradient(to bottom, black 20%, transparent 80%)'
+          }}
+        />
+        
+        {/* Gradients for Text Readability */}
+        {/* Bottom fade into the rest of the page */}
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-background/40 to-background" />
+        
+        {/* Side fade based on text alignment (RTL/LTR) */}
+        <div 
+          className={`absolute inset-0 bg-gradient-to-r ${
+            isRtl 
+              ? 'from-transparent via-background/50 to-background' 
+              : 'from-background via-background/50 to-transparent'
+          } opacity-100`} 
+        />
+        
+        {/* A subtle radial glow behind the text area */}
+        <div 
+          className={`absolute top-1/2 -translate-y-1/2 ${isRtl ? 'right-0 translate-x-1/4' : 'left-0 -translate-x-1/4'} w-[800px] h-[800px] bg-primary/10 blur-[120px] rounded-full pointer-events-none`}
+        />
+      </motion.div>
+
+      {/* Atmospheric Particles */}
+      <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden hidden sm:block">
+        {particles.map((p, i) => (
           <motion.div
             key={i}
-            className="absolute w-1 h-1 rounded-full bg-primary/30"
+            className="absolute rounded-full bg-primary/70"
             style={{
-              left: `${15 + i * 16}%`,
-              top: `${28 + (i % 3) * 18}%`,
+              width: p.size + 'px',
+              height: p.size + 'px',
+              left: `${p.left}%`,
+              top: `${p.top}%`,
+              willChange: 'transform, opacity',
             }}
             animate={{
-              y: [0, -18, 0],
-              opacity: [0.2, 0.6, 0.2],
-              scale: [1, 1.3, 1],
+              y: [0, -p.rise],
+              x: [0, p.drift],
+              opacity: [0, p.peakOpacity, 0],
             }}
             transition={{
-              duration: 3.5 + i * 0.4,
+              duration: p.duration,
               repeat: Infinity,
-              ease: 'easeInOut',
-              delay: i * 0.5,
+              ease: "linear",
+              delay: p.delay,
             }}
           />
         ))}
       </div>
 
-      <ScrollReveal className="max-w-4xl mx-auto flex flex-col items-center relative z-10 w-full">
-        <motion.span
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-          className="inline-flex items-center gap-2 py-1.5 px-5 rounded-full border border-primary/35 bg-primary/8 text-primary text-xs font-bold tracking-widest uppercase mb-8 shadow-sm"
+      {/* Hero Content */}
+      <div className="container relative z-10 px-5 sm:px-6 lg:px-8 mx-auto w-full h-full flex flex-col justify-center pt-28 pb-20">
+        <motion.div 
+          style={{ y: yText, opacity: opacityText }}
+          className={`max-w-4xl flex flex-col ${isRtl ? 'items-end text-right ml-auto' : 'items-start text-left mr-auto'}`}
         >
-          <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-          {t('hero.eyebrow')}
-        </motion.span>
-
-        <motion.h1
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2, duration: 0.7 }}
-          className="text-5xl md:text-7xl lg:text-8xl font-bold font-serif text-foreground leading-[1.1] mb-8 tracking-tight drop-shadow-2xl"
-        >
-          {t('hero.headline')}
-        </motion.h1>
-
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.4 }}
-          className="text-xl md:text-2xl text-primary/80 max-w-3xl mb-10 font-serif italic font-light leading-relaxed drop-shadow-md"
-        >
-          &ldquo;{t('hero.question')}&rdquo;
-        </motion.p>
-
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.5 }}
-          className="text-lg md:text-xl text-foreground/75 max-w-2xl mb-12 leading-relaxed font-medium"
-        >
-          {t('hero.invite')}
-        </motion.p>
-
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.6 }}
-          className="flex flex-wrap justify-center gap-2.5 max-w-4xl mb-14"
-        >
-          {pills.map((pill, idx) => (
-            <motion.span
-              key={idx}
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.6 + idx * 0.07 }}
-              className="px-4 py-2 rounded-full border border-border/50 bg-card/50 backdrop-blur text-sm font-medium text-foreground/80 shadow-sm hover:border-primary/40 hover:text-primary hover:bg-primary/5 transition-all duration-300 cursor-default"
-            >
-              {pill}
-            </motion.span>
-          ))}
-        </motion.div>
-
-        {/* CTA buttons */}
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.9 }}
-          className="flex flex-wrap items-center justify-center gap-3"
-        >
-          <Link href="/posts" className="inline-flex items-center gap-2 px-7 py-3.5 rounded-full bg-primary text-primary-foreground font-bold text-sm uppercase tracking-wider hover:brightness-110 transition-all glow-gold shadow-lg">
-            {t('nav.posts')}
-          </Link>
-          {!isSignedIn && (
-            <Link href="/sign-up" className="inline-flex items-center gap-2 px-7 py-3.5 rounded-full border border-border/60 bg-card/50 backdrop-blur text-foreground font-bold text-sm uppercase tracking-wider hover:border-primary/40 hover:text-primary transition-all">
-              {t('nav.signup')}
-            </Link>
-          )}
-          <a
-            href="https://new.donatepay.ru/@PeacefulCall"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 px-7 py-3.5 rounded-full border border-primary/25 bg-primary/8 text-primary font-bold text-sm uppercase tracking-wider hover:bg-primary/15 hover:border-primary/50 transition-all"
+          {/* Eyebrow */}
+          <motion.div
+            initial={{ opacity: 0, x: isRtl ? 30 : -30 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+            className="flex items-center gap-4 mb-6"
           >
-            <Heart className="w-4 h-4 fill-primary/40" />
-            {t('nav.donate')}
-          </a>
-        </motion.div>
-      </ScrollReveal>
+            <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primary/10 border border-primary/25 text-primary shadow-[0_0_15px_rgba(var(--primary),0.3)]">
+              <Sparkles className="w-5 h-5" />
+            </div>
+            <span className="text-sm md:text-base font-bold tracking-[0.25em] uppercase text-primary drop-shadow-sm">
+              {t('hero.eyebrow')}
+            </span>
+            <div className={`w-16 h-px bg-gradient-to-r ${isRtl ? 'from-transparent to-primary/50' : 'from-primary/50 to-transparent'}`} />
+          </motion.div>
 
-      {/* Scroll indicator */}
+          {/* Headline */}
+          <motion.h1
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
+            className="text-5xl sm:text-6xl md:text-7xl lg:text-[6.5rem] font-bold font-serif leading-[1.05] tracking-tight mb-8 drop-shadow-2xl text-transparent bg-clip-text bg-gradient-to-b from-foreground via-foreground to-foreground/60 text-balance"
+          >
+            {t('hero.headline')}
+          </motion.h1>
+
+          {/* Quote / Subtitle */}
+          <motion.p
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1, delay: 0.5, ease: [0.16, 1, 0.3, 1] }}
+            className="text-2xl sm:text-3xl md:text-4xl text-primary font-serif italic font-light leading-snug drop-shadow-lg mb-6 max-w-3xl text-balance"
+          >
+            &ldquo;{t('hero.question')}&rdquo;
+          </motion.p>
+
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1, delay: 0.6, ease: [0.16, 1, 0.3, 1] }}
+            className="text-lg md:text-xl lg:text-2xl text-foreground/80 font-medium leading-relaxed max-w-2xl mb-12 text-balance"
+          >
+            {t('hero.invite')}
+          </motion.p>
+
+          {/* Pills */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1, delay: 0.8 }}
+            className="flex flex-wrap gap-3 mb-14"
+          >
+            {pills.map((pill, idx) => (
+              <motion.span
+                key={idx}
+                initial={{ opacity: 0, scale: 0.8, y: 10 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                transition={{ delay: 0.8 + idx * 0.08, ease: "easeOut", duration: 0.5 }}
+                className="px-5 py-2.5 rounded-full border border-primary/25 bg-background/50 backdrop-blur-md text-sm font-medium text-foreground/90 shadow-[0_8px_30px_-10px_rgba(0,0,0,0.5)] hover:border-primary/60 hover:bg-primary/10 hover:text-primary transition-all duration-300 cursor-default"
+              >
+                {pill}
+              </motion.span>
+            ))}
+          </motion.div>
+
+          {/* CTAs */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1, delay: 1.1, ease: [0.16, 1, 0.3, 1] }}
+            className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 w-full sm:w-auto"
+          >
+            <Link 
+              href="/posts" 
+              className="group relative inline-flex items-center justify-center gap-3 px-8 py-4 rounded-full bg-primary text-primary-foreground font-bold text-sm uppercase tracking-widest overflow-hidden transition-all hover:scale-[1.02] active:scale-[0.98] glow-gold shadow-[0_0_40px_-10px_hsl(var(--primary))]"
+            >
+              <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out" />
+              <span className="relative z-10">{t('nav.posts')}</span>
+              {isRtl ? (
+                <ArrowLeft className="w-5 h-5 relative z-10 group-hover:-translate-x-1 transition-transform" />
+              ) : (
+                <ArrowRight className="w-5 h-5 relative z-10 group-hover:translate-x-1 transition-transform" />
+              )}
+            </Link>
+
+            {!isSignedIn && (
+              <Link 
+                href="/sign-up" 
+                className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full border-2 border-primary/30 bg-background/60 backdrop-blur-md text-foreground font-bold text-sm uppercase tracking-widest hover:border-primary hover:bg-primary/10 transition-all duration-300 shadow-lg"
+              >
+                {t('nav.signup')}
+              </Link>
+            )}
+
+            <a
+              href="https://new.donatepay.ru/@PeacefulCall"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group inline-flex items-center justify-center gap-3 px-8 py-4 rounded-full border border-border/60 bg-secondary/80 backdrop-blur-md text-foreground/90 font-bold text-sm uppercase tracking-widest hover:bg-secondary hover:text-primary transition-all duration-300 shadow-lg hover:border-primary/40"
+            >
+              <Heart className="w-5 h-5 text-primary/60 group-hover:text-primary transition-colors" />
+              {t('nav.donate')}
+            </a>
+          </motion.div>
+        </motion.div>
+      </div>
+
+      {/* Scroll Indicator */}
       <motion.div
-        className="absolute bottom-8 left-1/2 -translate-x-1/2"
-        animate={{ y: [0, 8, 0] }}
-        transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 1.8, duration: 1 }}
+        className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 z-10"
       >
-        <div className="w-5 h-8 rounded-full border-2 border-border/40 flex items-center justify-center">
-          <div className="w-1 h-2.5 rounded-full bg-primary/50" />
+        <div className="w-[2px] h-20 bg-gradient-to-b from-primary/50 to-transparent overflow-hidden rounded-full">
+          <motion.div 
+            className="w-full h-1/2 bg-primary shadow-[0_0_10px_rgba(var(--primary),1)]"
+            animate={{ y: ["-100%", "200%"] }}
+            transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+          />
         </div>
       </motion.div>
     </section>
