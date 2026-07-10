@@ -1,3 +1,4 @@
+import { PageTransition } from '@/components/PageTransition';
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
 import { ScrollReveal } from '@/components/ScrollReveal';
@@ -17,7 +18,7 @@ export default function HadithsPage() {
   );
 
   return (
-    <div className="min-h-screen flex flex-col bg-background gradient-bg" dir={isRtl ? 'rtl' : 'ltr'}>
+    <PageTransition className="min-h-screen flex flex-col bg-background gradient-bg">
       <Navbar />
       <main className="flex-grow pt-28 pb-24">
         <div className="container mx-auto px-4 sm:px-6 max-w-4xl">
@@ -114,6 +115,6 @@ export default function HadithsPage() {
         </div>
       </main>
       <Footer />
-    </div>
+    </PageTransition>
   );
 }

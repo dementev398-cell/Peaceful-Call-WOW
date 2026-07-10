@@ -1,3 +1,4 @@
+import { PageTransition } from '@/components/PageTransition';
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { useListAdmins } from "@workspace/api-client-react";
@@ -12,7 +13,7 @@ export default function AdminsPage() {
   const { t, isRtl } = useLanguage();
 
   return (
-    <div className="min-h-screen flex flex-col bg-background gradient-bg" dir={isRtl ? 'rtl' : 'ltr'}>
+    <PageTransition className="min-h-screen flex flex-col bg-background gradient-bg">
       <Navbar />
       <main className="flex-grow container mx-auto px-6 py-32 max-w-5xl">
         <ScrollReveal>
@@ -79,6 +80,6 @@ export default function AdminsPage() {
         )}
       </main>
       <Footer />
-    </div>
+    </PageTransition>
   );
 }

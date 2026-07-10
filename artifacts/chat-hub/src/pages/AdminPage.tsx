@@ -1,3 +1,4 @@
+import { PageTransition } from '@/components/PageTransition';
 import { useState, useEffect } from 'react';
 import { useLocation } from 'wouter';
 import {
@@ -57,7 +58,7 @@ async function clerkFetch(path: string, options: RequestInit = {}) {
 
 function AdminGateShell({ children }: { children: React.ReactNode }) {
   return (
-    <div className="relative min-h-screen flex flex-col items-center justify-center bg-background text-foreground p-6 overflow-hidden gradient-bg">
+    <PageTransition className="relative min-h-screen flex flex-col items-center justify-center bg-background text-foreground p-6 overflow-hidden gradient-bg">
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute -top-32 -left-32 w-80 h-80 rounded-full bg-primary/15 blur-3xl" />
         <div className="absolute -bottom-32 -right-32 w-80 h-80 rounded-full bg-primary/8 blur-3xl" />
@@ -65,7 +66,7 @@ function AdminGateShell({ children }: { children: React.ReactNode }) {
       <div className="relative z-10 glass rounded-[2rem] p-10 text-center shadow-2xl max-w-sm w-full border border-border/40">
         {children}
       </div>
-    </div>
+    </PageTransition>
   );
 }
 
@@ -80,11 +81,11 @@ export default function AdminPage() {
 
   if (isLoading || !clerkLoaded) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
+      <PageTransition className="min-h-screen flex items-center justify-center bg-background">
         <Loader2 className="w-7 h-7 animate-spin text-primary" />
-      </div>
-    );
-  }
+      </PageTransition>
+  );
+}
 
   if (!isSignedIn) {
     return (

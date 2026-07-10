@@ -1,3 +1,4 @@
+import { PageTransition } from '@/components/PageTransition';
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { Link } from "wouter";
@@ -60,7 +61,7 @@ export default function PortalPage() {
   ];
 
   return (
-    <div className="min-h-screen flex flex-col bg-background selection:bg-primary/30 selection:text-foreground gradient-bg" dir={isRtl ? 'rtl' : 'ltr'}>
+    <PageTransition className="min-h-screen flex flex-col bg-background selection:bg-primary/30 selection:text-foreground gradient-bg">
       <Navbar />
 
       <main className="flex-grow container mx-auto px-6 pt-32 pb-24 max-w-5xl">
@@ -134,6 +135,6 @@ export default function PortalPage() {
       </main>
 
       <Footer />
-    </div>
+    </PageTransition>
   );
 }

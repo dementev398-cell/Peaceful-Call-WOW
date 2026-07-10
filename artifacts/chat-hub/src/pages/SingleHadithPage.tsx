@@ -1,3 +1,4 @@
+import { PageTransition } from '@/components/PageTransition';
 import { useGetHadith } from '@workspace/api-client-react';
 import { useParams, Link } from 'wouter';
 import { Navbar } from '@/components/Navbar';
@@ -18,14 +19,14 @@ export default function SingleHadithPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex flex-col bg-background gradient-bg" dir={isRtl ? 'rtl' : 'ltr'}>
+      <PageTransition className="min-h-screen flex flex-col bg-background gradient-bg">
         <Navbar />
         <main className="flex-grow flex items-center justify-center">
           <Loader2 className="w-10 h-10 animate-spin text-primary" />
         </main>
-      </div>
-    );
-  }
+      </PageTransition>
+  );
+}
 
   if (error || !hadith || !Number.isFinite(hadithId)) {
     return <NotFound />;
@@ -34,7 +35,7 @@ export default function SingleHadithPage() {
   const meta = GRADE_META[hadith.grade] || GRADE_META.sahih;
 
   return (
-    <div className="min-h-screen flex flex-col bg-background gradient-bg" dir={isRtl ? 'rtl' : 'ltr'}>
+    <PageTransition className="min-h-screen flex flex-col bg-background gradient-bg" dir={isRtl ? 'rtl' : 'ltr'}>
       <Navbar />
       <main className="flex-grow pt-24 pb-32">
         <article className="container mx-auto px-4 sm:px-6 max-w-3xl">
@@ -78,6 +79,6 @@ export default function SingleHadithPage() {
         </article>
       </main>
       <Footer />
-    </div>
+    </PageTransition>
   );
 }

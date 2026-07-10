@@ -18,6 +18,7 @@ import { publishableKeyFromHost } from '@clerk/react/internal';
 import { LanguageProvider } from '@/contexts/LanguageContext';
 import { ThemeProvider } from '@/contexts/ThemeContext';
 import { useEffect, useRef } from 'react';
+import { AnimatePresence } from 'framer-motion';
 
 const queryClient = new QueryClient();
 
@@ -47,34 +48,36 @@ const clerkAppearance = {
     logoImageUrl: `${window.location.origin}${basePath}/logo.png`,
   },
   variables: {
-    colorPrimary: 'hsl(40 88% 55%)',
-    colorForeground: 'hsl(216 28% 95%)',
-    colorMutedForeground: 'hsl(220 12% 58%)',
+    colorPrimary: 'hsl(43 85% 58%)',
+    colorForeground: 'hsl(40 10% 96%)',
+    colorMutedForeground: 'hsl(220 12% 65%)',
     colorDanger: 'hsl(0 70% 52%)',
-    colorBackground: 'hsl(224 18% 7%)',
-    colorInput: 'hsl(224 14% 16%)',
-    colorInputForeground: 'hsl(216 28% 95%)',
-    colorNeutral: 'hsl(224 14% 20%)',
-    colorText: 'hsl(216 28% 95%)',
-    colorTextSecondary: 'hsl(220 12% 58%)',
-    colorTextOnPrimaryBackground: 'hsl(224 18% 7%)',
+    colorBackground: 'hsl(224 24% 4%)',
+    colorInput: 'hsl(224 16% 12%)',
+    colorInputForeground: 'hsl(40 10% 96%)',
+    colorNeutral: 'hsl(224 16% 12%)',
+    colorText: 'hsl(40 10% 96%)',
+    colorTextSecondary: 'hsl(220 12% 65%)',
+    colorTextOnPrimaryBackground: 'hsl(224 24% 4%)',
     fontFamily: "'Plus Jakarta Sans', sans-serif",
     borderRadius: '0.75rem',
   },
   elements: {
     rootBox: 'w-full flex justify-center',
-    cardBox: 'rounded-3xl w-[440px] max-w-full overflow-hidden shadow-2xl border border-white/10',
-    card: '!shadow-none !border-0 !bg-[hsl(224_18%_10%)] !rounded-none',
-    footer: '!shadow-none !border-0 !bg-[hsl(224_18%_10%)] !rounded-none',
-    headerTitle: 'font-serif text-2xl font-bold',
-    formButtonPrimary: 'rounded-full h-11 text-sm font-bold',
-    socialButtonsBlockButton: 'rounded-xl h-11 !border-white/15 !text-[hsl(216_28%_95%)] hover:!bg-white/8',
-    socialButtonsBlockButtonText: '!text-[hsl(216_28%_95%)] font-medium',
-    formFieldInput: 'rounded-xl h-11',
-    identityPreviewText: '!text-[hsl(216_28%_95%)]',
-    dividerText: '!text-[hsl(220_12%_58%)]',
+    cardBox: 'rounded-3xl w-[440px] max-w-full overflow-hidden shadow-2xl border border-white/5 glass',
+    card: '!shadow-none !border-0 !bg-transparent !rounded-none',
+    footer: '!shadow-none !border-0 !bg-transparent !rounded-none',
+    headerTitle: 'font-serif text-3xl font-bold',
+    headerSubtitle: '!text-[hsl(220_12%_65%)] font-serif',
+    formButtonPrimary: 'rounded-full h-12 text-sm font-bold tracking-wider uppercase transition-all glow-gold',
+    socialButtonsBlockButton: 'rounded-xl h-12 !border-white/10 !text-[hsl(40_10%_96%)] hover:!bg-white/5 transition-all',
+    socialButtonsBlockButtonText: '!text-[hsl(40_10%_96%)] font-medium',
+    formFieldInput: 'rounded-xl h-12 !bg-[hsl(224_16%_12%)] !border-white/10 hover:!border-white/20 focus:!border-[hsl(43_85%_58%)] transition-colors',
+    formFieldLabel: '!text-[hsl(220_12%_65%)]',
+    identityPreviewText: '!text-[hsl(40_10%_96%)]',
+    dividerText: '!text-[hsl(220_12%_65%)]',
     dividerLine: '!bg-white/10',
-    alternativeMethodsBlockButton: '!text-[hsl(216_28%_95%)]',
+    alternativeMethodsBlockButton: '!text-[hsl(40_10%_96%)]',
   },
 };
 
@@ -120,8 +123,11 @@ function ClerkQueryClientCacheInvalidator() {
 }
 
 function Router() {
+  const [location] = useLocation();
+
   return (
-    <Switch>
+    <AnimatePresence mode="wait">
+      <Switch key={location}>
       <Route path="/" component={Home} />
       <Route path="/sign-in/*?" component={SignInPage} />
       <Route path="/sign-up/*?" component={SignUpPage} />
@@ -146,7 +152,8 @@ function Router() {
       <Route path="/admins" component={AdminsPage} />
 
       <Route component={NotFound} />
-    </Switch>
+      </Switch>
+    </AnimatePresence>
   );
 }
 

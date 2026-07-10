@@ -1,3 +1,4 @@
+import { PageTransition } from '@/components/PageTransition';
 import { useState } from 'react';
 import { useGetPostBySlug, useGetPostInteractions, useCreatePostComment, useDeletePostComment, useReactToPost } from '@workspace/api-client-react';
 import { useParams, Link } from 'wouter';
@@ -21,21 +22,21 @@ export default function SinglePostPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex flex-col bg-background gradient-bg" dir={isRtl ? 'rtl' : 'ltr'}>
+      <PageTransition className="min-h-screen flex flex-col bg-background gradient-bg">
         <Navbar />
         <main className="flex-grow flex items-center justify-center">
           <Loader2 className="w-10 h-10 animate-spin text-primary" />
         </main>
-      </div>
-    );
-  }
+      </PageTransition>
+  );
+}
 
   if (error || !post) {
     return <NotFound />;
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-background gradient-bg" dir={isRtl ? 'rtl' : 'ltr'}>
+    <PageTransition className="min-h-screen flex flex-col bg-background gradient-bg" dir={isRtl ? 'rtl' : 'ltr'}>
       <Navbar />
 
       <main className="flex-grow pt-24 pb-32">
@@ -103,7 +104,7 @@ export default function SinglePostPage() {
       </main>
 
       <Footer />
-    </div>
+    </PageTransition>
   );
 }
 

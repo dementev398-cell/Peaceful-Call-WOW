@@ -12,8 +12,10 @@ export function Stats() {
   ];
 
   return (
-    <section className="py-24 bg-primary relative text-primary-foreground" dir={isRtl ? 'rtl' : 'ltr'}>
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(0,0,0,0.1)_1px,transparent_1px),linear-gradient(to_bottom,rgba(0,0,0,0.1)_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)] opacity-20 pointer-events-none"></div>
+    <section className="py-24 bg-primary relative text-primary-foreground overflow-hidden" dir={isRtl ? 'rtl' : 'ltr'}>
+      {/* Refined elegant texture instead of grid lines */}
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,0,0,0.15)_0%,transparent_100%)]"></div>
+      <div className="absolute inset-0 shimmer opacity-20"></div>
 
       <div className="container mx-auto px-6 max-w-6xl relative z-10">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-x-8 gap-y-16 text-center divide-x divide-primary-foreground/10">

@@ -1,3 +1,4 @@
+import { PageTransition } from '@/components/PageTransition';
 import { useState, useRef, useEffect } from "react";
 import { Navbar } from "@/components/Navbar";
 import { 
@@ -36,7 +37,7 @@ export default function MessagesPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-background">
+    <PageTransition className="min-h-screen flex flex-col bg-background">
       <Navbar />
       <main className="flex-grow container mx-auto px-4 py-24 sm:py-28 max-w-7xl">
         <ScrollReveal>
@@ -119,7 +120,7 @@ export default function MessagesPage() {
           </div>
         </div>
       </main>
-    </div>
+    </PageTransition>
   );
 }
 
