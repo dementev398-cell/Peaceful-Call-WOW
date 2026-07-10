@@ -93,6 +93,11 @@ export const ListPostsResponseItem = zod.object({
   "excerpt": zod.string(),
   "content": zod.string(),
   "coverImageUrl": zod.string().nullish(),
+  "attachments": zod.array(zod.object({
+  "url": zod.string(),
+  "type": zod.enum(['image', 'video', 'file']),
+  "name": zod.string().optional()
+})),
   "published": zod.boolean(),
   "authorId": zod.number().nullish(),
   "authorName": zod.string(),
@@ -113,6 +118,11 @@ export const CreatePostBody = zod.object({
   "excerpt": zod.string().optional(),
   "content": zod.string().optional(),
   "coverImageUrl": zod.string().nullish(),
+  "attachments": zod.array(zod.object({
+  "url": zod.string(),
+  "type": zod.enum(['image', 'video', 'file']),
+  "name": zod.string().optional()
+})).optional(),
   "published": zod.boolean().optional()
 })
 
@@ -123,6 +133,11 @@ export const CreatePostResponse = zod.object({
   "excerpt": zod.string(),
   "content": zod.string(),
   "coverImageUrl": zod.string().nullish(),
+  "attachments": zod.array(zod.object({
+  "url": zod.string(),
+  "type": zod.enum(['image', 'video', 'file']),
+  "name": zod.string().optional()
+})),
   "published": zod.boolean(),
   "authorId": zod.number().nullish(),
   "authorName": zod.string(),
@@ -141,6 +156,11 @@ export const ListMyPostsResponseItem = zod.object({
   "excerpt": zod.string(),
   "content": zod.string(),
   "coverImageUrl": zod.string().nullish(),
+  "attachments": zod.array(zod.object({
+  "url": zod.string(),
+  "type": zod.enum(['image', 'video', 'file']),
+  "name": zod.string().optional()
+})),
   "published": zod.boolean(),
   "authorId": zod.number().nullish(),
   "authorName": zod.string(),
@@ -164,6 +184,11 @@ export const GetPostBySlugResponse = zod.object({
   "excerpt": zod.string(),
   "content": zod.string(),
   "coverImageUrl": zod.string().nullish(),
+  "attachments": zod.array(zod.object({
+  "url": zod.string(),
+  "type": zod.enum(['image', 'video', 'file']),
+  "name": zod.string().optional()
+})),
   "published": zod.boolean(),
   "authorId": zod.number().nullish(),
   "authorName": zod.string(),
@@ -187,6 +212,11 @@ export const UpdatePostBody = zod.object({
   "excerpt": zod.string().optional(),
   "content": zod.string().optional(),
   "coverImageUrl": zod.string().nullish(),
+  "attachments": zod.array(zod.object({
+  "url": zod.string(),
+  "type": zod.enum(['image', 'video', 'file']),
+  "name": zod.string().optional()
+})).optional(),
   "published": zod.boolean().optional()
 })
 
@@ -197,6 +227,11 @@ export const UpdatePostResponse = zod.object({
   "excerpt": zod.string(),
   "content": zod.string(),
   "coverImageUrl": zod.string().nullish(),
+  "attachments": zod.array(zod.object({
+  "url": zod.string(),
+  "type": zod.enum(['image', 'video', 'file']),
+  "name": zod.string().optional()
+})),
   "published": zod.boolean(),
   "authorId": zod.number().nullish(),
   "authorName": zod.string(),

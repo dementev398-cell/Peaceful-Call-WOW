@@ -1,3 +1,5 @@
+import { parseApiDate } from "@/lib/date";
+import { resolvePostCover } from "@/lib/storage";
 import { Link } from "wouter";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Calendar, ArrowRight, User } from "lucide-react";
@@ -5,7 +7,8 @@ import { motion } from "framer-motion";
 
 export function PostCard({ post }: { post: any }) {
   const { t, isRtl } = useLanguage();
-  
+  const coverSrc = resolvePostCover(post);
+
   return (
     <Link href={`/posts/${post.slug}`} className="block h-full group">
       <motion.div
@@ -13,10 +16,10 @@ export function PostCard({ post }: { post: any }) {
         transition={{ duration: 0.2 }}
         className="h-full glass rounded-[2rem] border border-border/50 overflow-hidden hover:border-primary/40 transition-all duration-300 hover:shadow-xl hover:shadow-primary/5 flex flex-col"
       >
-        {post.coverImageUrl ? (
+        {coverSrc ? (
           <div className="relative h-52 overflow-hidden">
             <img
-              src={post.coverImageUrl}
+              src={coverSrc}
               alt={post.title}
               className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
             />
@@ -35,7 +38,7 @@ export function PostCard({ post }: { post: any }) {
             </span>
             <span className="flex items-center gap-1.5 text-xs text-muted-foreground font-medium">
               <Calendar className="w-3.5 h-3.5" />
-              {new Date(post.createdAt).toLocaleDateString(
+              {parseApiDate(post.createdAt).toLocaleDateString(
                 isRtl ? 'ar' : undefined,
                 { year: 'numeric', month: 'long', day: 'numeric' }
               )}

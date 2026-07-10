@@ -5,6 +5,7 @@
  * Стильный призыв API
  * OpenAPI spec version: 0.1.0
  */
+import type { PostAttachment } from './postAttachment';
 
 export interface PostUpdate {
   /** @minLength 1 */
@@ -13,5 +14,6 @@ export interface PostUpdate {
   content?: string;
   /** @nullable */
   coverImageUrl?: string | null;
+  attachments?: PostAttachment[];
   published?: boolean;
 }

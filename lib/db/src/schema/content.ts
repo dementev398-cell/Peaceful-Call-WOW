@@ -8,7 +8,7 @@ export const contentItemsTable = pgTable("content_items", {
   type: text("type", { enum: ["text", "textarea", "url", "color", "image"] }).notNull().default("text"),
   value: text("value").notNull().default(""),
   order: integer("order").notNull().default(0),
-  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at", { mode: "string" }).notNull().defaultNow(),
 });
 
 export type ContentItem = typeof contentItemsTable.$inferSelect;

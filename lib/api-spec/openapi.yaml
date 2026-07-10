@@ -974,9 +974,17 @@ components:
         $ref: "#/components/schemas/ContentItem"
 
     # ── Posts ──────────────────────────────────────────────────────────
+    PostAttachment:
+      type: object
+      required: [url, type]
+      properties:
+        url: { type: string }
+        type: { type: string, enum: [image, video, file] }
+        name: { type: string }
+
     Post:
       type: object
-      required: [id, title, slug, excerpt, content, published, authorName, createdAt, updatedAt]
+      required: [id, title, slug, excerpt, content, published, authorName, attachments, createdAt, updatedAt]
       properties:
         id: { type: integer }
         title: { type: string }
@@ -984,6 +992,10 @@ components:
         excerpt: { type: string }
         content: { type: string }
         coverImageUrl: { type: ["string", "null"] }
+        attachments:
+          type: array
+          items:
+            $ref: "#/components/schemas/PostAttachment"
         published: { type: boolean }
         authorId: { type: ["integer", "null"] }
         authorName: { type: string }
@@ -1008,6 +1020,10 @@ components:
         excerpt: { type: string }
         content: { type: string }
         coverImageUrl: { type: ["string", "null"] }
+        attachments:
+          type: array
+          items:
+            $ref: "#/components/schemas/PostAttachment"
         published: { type: boolean }
 
     PostUpdate:
@@ -1017,6 +1033,10 @@ components:
         excerpt: { type: string }
         content: { type: string }
         coverImageUrl: { type: ["string", "null"] }
+        attachments:
+          type: array
+          items:
+            $ref: "#/components/schemas/PostAttachment"
         published: { type: boolean }
 
     CreatePostPayload:

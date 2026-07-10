@@ -66,7 +66,7 @@ export async function requireAppUser(
       .values({ clerkUserId: userId, name, email, avatarUrl })
       .onConflictDoUpdate({
         target: appUsersTable.clerkUserId,
-        set: { name, email, avatarUrl, updatedAt: new Date() },
+        set: { name, email, avatarUrl, updatedAt: new Date().toISOString() },
       })
       .returning();
 

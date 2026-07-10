@@ -57,6 +57,8 @@ export * from './markMessageReadPayload';
 export * from './message';
 export * from './messageInput';
 export * from './post';
+export * from './postAttachment';
+export * from './postAttachmentType';
 export * from './postComment';
 export * from './postInput';
 export * from './postInteractions';

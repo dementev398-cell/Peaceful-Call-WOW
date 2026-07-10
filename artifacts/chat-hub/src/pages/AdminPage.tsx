@@ -1,5 +1,6 @@
+import { parseApiDate } from "@/lib/date";
 import { PageTransition } from '@/components/PageTransition';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useLocation } from 'wouter';
 import {
   useGetMe,
@@ -10,6 +11,7 @@ import {
   useCreatePost,
   useUpdatePost,
   useDeletePost,
+  useRequestUploadUrl,
   useListMyHadiths,
   useCreateHadith,
   useUpdateHadith,
@@ -24,7 +26,8 @@ import {
   useReplyToMessage,
   useDeleteMessage,
   useGetUnreadCount,
-  type ContentItem
+  type ContentItem,
+  type PostAttachment
 } from '@workspace/api-client-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
@@ -36,11 +39,12 @@ import {
   Mail, MailOpen, Reply, MessageCircle, Crown, Shield,
   ShieldAlert, LogIn, Users, Ban, VolumeX, Eye,
   ChevronLeft, FileText, Settings, LayoutDashboard,
-  Heart, ScrollText
+  Heart, ScrollText, Paperclip, Film
 } from 'lucide-react';
 import { useClerk, useUser } from '@clerk/react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { attachmentSrc, getAttachmentType, resolvePostCover } from '@/lib/storage';
 import { motion } from 'framer-motion';
 
 async function clerkFetch(path: string, options: RequestInit = {}) {
@@ -463,7 +467,7 @@ function MessagesManager({ userRole }: { userRole: string }) {
                           {msg.senderName}
                         </span>
                         <span className="text-[10px] text-muted-foreground flex-shrink-0 ml-2">
-                          {new Date(msg.createdAt).toLocaleDateString()}
+                          {parseApiDate(msg.createdAt).toLocaleDateString()}
                         </span>
                       </div>
                       {msg.subject && (
@@ -500,7 +504,7 @@ function MessagesManager({ userRole }: { userRole: string }) {
                       {thread.message.senderEmail && ` <${thread.message.senderEmail}>`}
                     </p>
                     <p className="text-xs text-muted-foreground/70 mt-0.5">
-                      {new Date(thread.message.createdAt).toLocaleString()}
+                      {parseApiDate(thread.message.createdAt).toLocaleString()}
                     </p>
                   </div>
                   {userRole === 'owner' && (
@@ -519,7 +523,7 @@ function MessagesManager({ userRole }: { userRole: string }) {
                   <div key={r.id} className={`rounded-xl p-4 ${r.senderRole === 'owner' || r.senderRole === 'editor' ? 'bg-primary/8 border border-primary/15 ml-4' : 'bg-muted/30'}`}>
                     <div className="flex items-center gap-2 mb-2 flex-wrap">
                       <span className="text-xs font-bold text-primary">{r.senderName}</span>
-                      <span className="text-[10px] text-muted-foreground">{new Date(r.createdAt).toLocaleString()}</span>
+                      <span className="text-[10px] text-muted-foreground">{parseApiDate(r.createdAt).toLocaleString()}</span>
                       {(r.senderRole === 'owner' || r.senderRole === 'editor') && (
                         <span className="text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded bg-primary/15 text-primary border border-primary/20">
                           {t('admin.admins')}
@@ -739,6 +743,45 @@ function PostsManager() {
   const { toast } = useToast();
   const { t } = useLanguage();
   const [editingPost, setEditingPost] = useState<any>(null);
+  const requestUploadUrl = useRequestUploadUrl();
+  const [uploading, setUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleAddFiles = async (files: FileList | null) => {
+    if (!files || files.length === 0) return;
+    setUploading(true);
+    try {
+      const uploaded: PostAttachment[] = [];
+      for (const file of Array.from(files)) {
+        const { uploadURL, objectPath } = await requestUploadUrl.mutateAsync({
+          data: { name: file.name, size: file.size, contentType: file.type },
+        });
+        const putRes = await fetch(uploadURL, {
+          method: 'PUT',
+          body: file,
+          headers: { 'Content-Type': file.type },
+        });
+        if (!putRes.ok) throw new Error(`Upload failed: ${file.name}`);
+        uploaded.push({ url: objectPath, type: getAttachmentType(file.type), name: file.name });
+      }
+      setEditingPost((prev: any) => ({
+        ...prev,
+        attachments: [...(prev?.attachments ?? []), ...uploaded],
+      }));
+    } catch (error: any) {
+      toast({ title: 'Error', description: error.message, variant: 'destructive' });
+    } finally {
+      setUploading(false);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    }
+  };
+
+  const removeAttachment = (idx: number) => {
+    setEditingPost((prev: any) => ({
+      ...prev,
+      attachments: (prev?.attachments ?? []).filter((_: any, i: number) => i !== idx),
+    }));
+  };
 
   if (isLoading) return <div className="py-16 flex justify-center"><Loader2 className="w-6 h-6 animate-spin text-primary" /></div>;
 
@@ -807,6 +850,51 @@ function PostsManager() {
             </div>
           )}
           <div>
+            <label className="text-xs font-medium text-muted-foreground mb-1.5 block">{t('admin.attachments')}</label>
+            <input
+              ref={fileInputRef}
+              type="file"
+              multiple
+              accept="image/*,video/*,application/pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.zip"
+              className="hidden"
+              onChange={e => handleAddFiles(e.target.files)}
+            />
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => fileInputRef.current?.click()}
+              disabled={uploading}
+              className="rounded-full gap-2 h-9 text-sm"
+            >
+              {uploading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Paperclip className="w-3.5 h-3.5" />}
+              {uploading ? t('admin.uploading') : t('admin.addFiles')}
+            </Button>
+            {editingPost.attachments?.length > 0 && (
+              <div className="mt-3 grid grid-cols-2 sm:grid-cols-3 gap-3">
+                {editingPost.attachments.map((a: PostAttachment, i: number) => (
+                  <div key={i} className="relative group rounded-xl border border-border/40 overflow-hidden bg-muted/40">
+                    {a.type === 'image' ? (
+                      <img src={attachmentSrc(a.url)} alt={a.name || ''} className="w-full h-24 object-cover" />
+                    ) : a.type === 'video' ? (
+                      <div className="w-full h-24 flex items-center justify-center bg-black/80 text-white"><Film className="w-6 h-6" /></div>
+                    ) : (
+                      <div className="w-full h-24 flex items-center justify-center"><FileText className="w-6 h-6 text-primary" /></div>
+                    )}
+                    <div className="px-2 py-1.5 text-[10px] truncate text-muted-foreground">{a.name || a.url.split('/').pop()}</div>
+                    <button
+                      type="button"
+                      onClick={() => removeAttachment(i)}
+                      className="absolute top-1.5 right-1.5 p-1 rounded-lg bg-background/90 text-destructive opacity-0 group-hover:opacity-100 transition-opacity border border-border/50"
+                    >
+                      <X className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+          <div>
             <label className="text-xs font-medium text-muted-foreground mb-1.5 block">{t('admin.content_text')}</label>
             <Textarea value={editingPost.content || ''} onChange={e => setEditingPost({...editingPost, content: e.target.value})} className="bg-background/50 min-h-[260px] font-mono text-sm rounded-xl resize-y" />
           </div>
@@ -844,10 +932,10 @@ function PostsManager() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {posts.map((post) => (
             <div key={post.id} className="bg-card border border-border/40 rounded-2xl overflow-hidden flex flex-col hover:border-border transition-colors group">
-              {post.coverImageUrl ? (
+              {resolvePostCover(post) ? (
                 <div className="h-36 overflow-hidden relative bg-muted">
                   <img
-                    src={post.coverImageUrl}
+                    src={resolvePostCover(post) ?? undefined}
                     alt={post.title}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     onError={(e) => {
@@ -873,7 +961,7 @@ function PostsManager() {
                 <h4 className="text-base font-serif font-bold mb-1.5 line-clamp-2 leading-snug">{post.title}</h4>
                 {post.excerpt && <p className="text-muted-foreground text-xs line-clamp-2 mb-3 leading-relaxed">{post.excerpt}</p>}
                 <div className="mt-auto flex items-center justify-between pt-3 border-t border-border/30">
-                  <span className="text-xs text-muted-foreground">{new Date(post.createdAt).toLocaleDateString()}</span>
+                  <span className="text-xs text-muted-foreground">{parseApiDate(post.createdAt).toLocaleDateString()}</span>
                   <div className="flex gap-1">
                     <Button variant="ghost" size="icon" onClick={() => setEditingPost(post)} className="h-7 w-7 text-primary/60 hover:text-primary hover:bg-primary/10 rounded-lg">
                       <Edit2 className="w-3.5 h-3.5" />

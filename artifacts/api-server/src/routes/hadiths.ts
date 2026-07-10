@@ -112,7 +112,7 @@ router.patch("/hadiths/:id", requireAdmin, async (req, res): Promise<void> => {
 
   const [updated] = await db
     .update(hadithsTable)
-    .set({ ...parsed.data, updatedAt: new Date() })
+    .set({ ...parsed.data, updatedAt: new Date().toISOString() })
     .where(eq(hadithsTable.id, id))
     .returning();
 

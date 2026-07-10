@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useContentDict } from '@/hooks/use-content';
 import { SignOutButton, useUser } from '@clerk/react';
 import { UserMenu } from './UserMenu';
-import { Menu, X, LogOut, BookOpen, ScrollText, Heart } from 'lucide-react';
+import { Menu, X, LogOut, BookOpen, ScrollText } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export function Navbar() {
@@ -21,7 +21,7 @@ export function Navbar() {
   }, []);
 
   const logoImg = dict['site.logo'] || '/logo-source.jpg';
-  const siteName = dict['site.name'] || 'Peaceful Call';
+  const siteName = dict['site.name'] || t('site.name');
 
   return (
     <header
@@ -60,19 +60,6 @@ export function Navbar() {
             <ScrollText className="w-3.5 h-3.5" />
             {t('nav.hadiths')}
           </Link>
-          <a href="#contact" className="text-xs font-bold tracking-widest text-muted-foreground hover:text-foreground transition-colors uppercase">
-            {t('nav.contact')}
-          </a>
-          {/* Donation button */}
-          <a
-            href="https://new.donatepay.ru/@PeacefulCall"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 text-xs font-bold tracking-widest text-primary/90 hover:text-primary transition-colors uppercase"
-          >
-            <Heart className="w-3.5 h-3.5 fill-primary/40" />
-            {t('nav.donate')}
-          </a>
         </nav>
 
         {/* Right Controls */}
@@ -151,20 +138,6 @@ export function Navbar() {
               <ScrollText className="w-4 h-4" />
               {t('nav.hadiths')}
             </Link>
-            <a href="#contact" onClick={() => setMenuOpen(false)} className="text-sm font-semibold tracking-widest text-muted-foreground hover:text-foreground transition-colors uppercase py-1.5 border-b border-border/20">
-              {t('nav.contact')}
-            </a>
-            {/* Donation */}
-            <a
-              href="https://new.donatepay.ru/@PeacefulCall"
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={() => setMenuOpen(false)}
-              className="flex items-center gap-2 text-sm font-semibold tracking-widest text-primary uppercase py-1.5 border-b border-border/20"
-            >
-              <Heart className="w-4 h-4 fill-primary/40" />
-              {t('nav.donate')}
-            </a>
             <div className="pt-1.5">
               {isSignedIn ? (
                 <div className="flex items-center gap-2.5">

@@ -1,3 +1,4 @@
+import { parseApiDate } from "@/lib/date";
 import { PageTransition } from '@/components/PageTransition';
 import { useState } from 'react';
 import { useGetPostBySlug, useGetPostInteractions, useCreatePostComment, useDeletePostComment, useReactToPost } from '@workspace/api-client-react';
@@ -6,6 +7,8 @@ import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
 import { Loader2, ArrowLeft, Calendar, ThumbsUp, ThumbsDown, MessageCircle, Trash2, ShieldCheck, Send, User } from 'lucide-react';
 import { ScrollReveal } from '@/components/ScrollReveal';
+import { PostAttachments } from '@/components/PostAttachments';
+import { attachmentSrc } from '@/lib/storage';
 import NotFound from './not-found';
 import { useUser } from '@clerk/react';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -54,7 +57,7 @@ export default function SinglePostPage() {
                 </span>
                 <span className="flex items-center gap-1.5 text-sm text-muted-foreground">
                   <Calendar className="w-4 h-4 opacity-70" />
-                  {new Date(post.createdAt).toLocaleDateString(isRtl ? 'ar' : undefined, { year: 'numeric', month: 'long', day: 'numeric' })}
+                  {parseApiDate(post.createdAt).toLocaleDateString(isRtl ? 'ar' : undefined, { year: 'numeric', month: 'long', day: 'numeric' })}
                 </span>
               </div>
 
@@ -79,7 +82,7 @@ export default function SinglePostPage() {
           {post.coverImageUrl && (
             <ScrollReveal delay="100">
               <div className="w-full aspect-[21/9] rounded-3xl overflow-hidden mb-16 shadow-2xl border border-border/30">
-                <img src={post.coverImageUrl} alt={post.title} className="w-full h-full object-cover" />
+                <img src={attachmentSrc(post.coverImageUrl)} alt={post.title} className="w-full h-full object-cover" />
               </div>
             </ScrollReveal>
           )}
@@ -94,6 +97,10 @@ export default function SinglePostPage() {
                 return <p key={i}>{paragraph}</p>;
               })}
             </div>
+          </ScrollReveal>
+
+          <ScrollReveal delay="180">
+            <PostAttachments attachments={post.attachments} />
           </ScrollReveal>
 
           {/* Reactions + Comments */}
@@ -282,7 +289,7 @@ function PostInteractions({ postId }: { postId: number }) {
                           </span>
                         )}
                         <span className="text-xs text-muted-foreground ml-auto">
-                          {new Date(comment.createdAt).toLocaleDateString(isRtl ? 'ar' : undefined, { year: 'numeric', month: 'short', day: 'numeric' })}
+                          {parseApiDate(comment.createdAt).toLocaleDateString(isRtl ? 'ar' : undefined, { year: 'numeric', month: 'short', day: 'numeric' })}
                         </span>
                       </div>
                       <p className="text-sm text-foreground/90 whitespace-pre-wrap leading-relaxed">{comment.content}</p>

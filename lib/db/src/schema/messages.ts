@@ -11,7 +11,7 @@ export const messagesTable = pgTable("messages", {
   content: text("content").notNull(),
   isRead: boolean("is_read").notNull().default(false),
   parentId: integer("parent_id"),
-  createdAt: timestamp("created_at").notNull().defaultNow(),
+  createdAt: timestamp("created_at", { mode: "string" }).notNull().defaultNow(),
 });
 
 export type Message = typeof messagesTable.$inferSelect;

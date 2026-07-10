@@ -1,3 +1,4 @@
+import { parseApiDate } from "@/lib/date";
 import { PageTransition } from '@/components/PageTransition';
 import { useState, useRef, useEffect } from "react";
 import { Navbar } from "@/components/Navbar";
@@ -92,7 +93,7 @@ export default function MessagesPage() {
                           {conv.kind === 'support' ? 'Администрация' : conv.title}
                         </span>
                         <span className="text-[10px] text-muted-foreground flex-shrink-0">
-                          {new Date(conv.lastMessageAt).toLocaleDateString()}
+                          {parseApiDate(conv.lastMessageAt).toLocaleDateString()}
                         </span>
                       </div>
                       <p className={`text-xs truncate ${conv.unread ? 'text-foreground font-semibold' : 'text-muted-foreground'}`}>
@@ -258,7 +259,7 @@ function ChatThread({ conversationId, onBack }: { conversationId: number, onBack
                       )}
                     </div>
                     <span className="text-[10px] text-muted-foreground mt-1 opacity-60">
-                      {new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                      {parseApiDate(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                     </span>
                   </div>
                 </div>

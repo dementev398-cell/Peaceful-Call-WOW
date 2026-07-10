@@ -145,6 +145,21 @@ export interface UpsertContentInput {
 
 export type UpsertContentPayload = ContentItem[];
 
+export type PostAttachmentType = typeof PostAttachmentType[keyof typeof PostAttachmentType];
+
+
+export const PostAttachmentType = {
+  image: 'image',
+  video: 'video',
+  file: 'file',
+} as const;
+
+export interface PostAttachment {
+  url: string;
+  type: PostAttachmentType;
+  name?: string;
+}
+
 export interface Post {
   id: number;
   title: string;
@@ -153,6 +168,7 @@ export interface Post {
   content: string;
   /** @nullable */
   coverImageUrl?: string | null;
+  attachments: PostAttachment[];
   published: boolean;
   /** @nullable */
   authorId?: number | null;
@@ -172,6 +188,7 @@ export interface PostInput {
   content?: string;
   /** @nullable */
   coverImageUrl?: string | null;
+  attachments?: PostAttachment[];
   published?: boolean;
 }
 
@@ -182,6 +199,7 @@ export interface PostUpdate {
   content?: string;
   /** @nullable */
   coverImageUrl?: string | null;
+  attachments?: PostAttachment[];
   published?: boolean;
 }
 

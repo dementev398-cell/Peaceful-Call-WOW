@@ -9,7 +9,7 @@ export const postCommentsTable = pgTable("post_comments", {
   authorAvatarUrl: text("author_avatar_url"),
   isAdmin: boolean("is_admin").notNull().default(false),
   content: text("content").notNull(),
-  createdAt: timestamp("created_at").notNull().defaultNow(),
+  createdAt: timestamp("created_at", { mode: "string" }).notNull().defaultNow(),
 });
 
 export type PostComment = typeof postCommentsTable.$inferSelect;
@@ -20,7 +20,7 @@ export const postReactionsTable = pgTable("post_reactions", {
   postId: integer("post_id").notNull().references(() => postsTable.id, { onDelete: "cascade" }),
   clerkUserId: text("clerk_user_id").notNull(),
   type: text("type", { enum: ["like", "dislike"] }).notNull(),
-  createdAt: timestamp("created_at").notNull().defaultNow(),
+  createdAt: timestamp("created_at", { mode: "string" }).notNull().defaultNow(),
 }, (t) => ({
   uniq: unique().on(t.postId, t.clerkUserId),
 }));

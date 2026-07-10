@@ -77,6 +77,7 @@ router.post("/posts", requireAdmin, async (req, res): Promise<void> => {
       excerpt: parsed.data.excerpt ?? "",
       content: parsed.data.content ?? "",
       coverImageUrl: parsed.data.coverImageUrl ?? null,
+      attachments: parsed.data.attachments ?? [],
       published: parsed.data.published ?? true,
       authorId: admin.id,
       authorName: admin.name || admin.email,

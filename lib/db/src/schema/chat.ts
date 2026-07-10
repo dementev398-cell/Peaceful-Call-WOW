@@ -9,8 +9,8 @@ export const appUsersTable = pgTable("app_users", {
   name: text("name").notNull().default(""),
   email: text("email").notNull().default(""),
   avatarUrl: text("avatar_url"),
-  updatedAt: timestamp("updated_at").notNull().defaultNow(),
-  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at", { mode: "string" }).notNull().defaultNow(),
+  createdAt: timestamp("created_at", { mode: "string" }).notNull().defaultNow(),
 });
 
 export type AppUser = typeof appUsersTable.$inferSelect;
@@ -25,11 +25,11 @@ export const conversationsTable = pgTable("conversations", {
   kind: text("kind", { enum: ["support", "direct"] }).notNull(),
   userAClerkId: text("user_a_clerk_id").notNull(),
   userBClerkId: text("user_b_clerk_id"),
-  lastMessageAt: timestamp("last_message_at").notNull().defaultNow(),
+  lastMessageAt: timestamp("last_message_at", { mode: "string" }).notNull().defaultNow(),
   lastMessagePreview: text("last_message_preview").notNull().default(""),
-  lastReadAtA: timestamp("last_read_at_a"),
-  lastReadAtB: timestamp("last_read_at_b"),
-  createdAt: timestamp("created_at").notNull().defaultNow(),
+  lastReadAtA: timestamp("last_read_at_a", { mode: "string" }),
+  lastReadAtB: timestamp("last_read_at_b", { mode: "string" }),
+  createdAt: timestamp("created_at", { mode: "string" }).notNull().defaultNow(),
 });
 
 export type Conversation = typeof conversationsTable.$inferSelect;
@@ -54,7 +54,7 @@ export const chatMessagesTable = pgTable("chat_messages", {
   attachmentName: text("attachment_name"),
   attachmentMimeType: text("attachment_mime_type"),
   attachmentSize: integer("attachment_size"),
-  createdAt: timestamp("created_at").notNull().defaultNow(),
+  createdAt: timestamp("created_at", { mode: "string" }).notNull().defaultNow(),
 });
 
 export type ChatMessage = typeof chatMessagesTable.$inferSelect;

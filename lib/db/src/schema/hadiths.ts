@@ -14,8 +14,8 @@ export const hadithsTable = pgTable("hadiths", {
   published: boolean("published").notNull().default(true),
   authorId: integer("author_id"),
   authorName: text("author_name").notNull().default(""),
-  createdAt: timestamp("created_at").notNull().defaultNow(),
-  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+  createdAt: timestamp("created_at", { mode: "string" }).notNull().defaultNow(),
+  updatedAt: timestamp("updated_at", { mode: "string" }).notNull().defaultNow(),
 });
 
 export type Hadith = typeof hadithsTable.$inferSelect;

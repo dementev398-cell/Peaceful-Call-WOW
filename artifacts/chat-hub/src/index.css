@@ -5,6 +5,14 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* Hide Clerk's footer branding row ("Secured by Clerk" / the "Development mode" dev badge).
+   `cl-footerItem` is Clerk's stable class for the bottom branding row; the sign-up/sign-in
+   prompt is a separate `cl-footerAction*` element and is unaffected. Unlayered so it beats
+   the `clerk` css layer without needing !important on specificity grounds. */
+.cl-footerItem {
+  display: none !important;
+}
+
 @theme inline {
   --color-background: hsl(var(--background));
   --color-foreground: hsl(var(--foreground));

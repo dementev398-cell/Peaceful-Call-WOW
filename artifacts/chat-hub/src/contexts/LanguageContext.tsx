@@ -12,6 +12,10 @@ interface LanguageContextType {
 const translations: Record<Language, Record<string, string>> = {
   RU: {
     // Nav
+    // Site / Auth
+    'site.name': 'Мирный призыв',
+    'auth.backHome': 'На главную',
+    'auth.tagline': 'Присоединяйтесь к сообществу',
     'nav.home': 'Главная',
     'nav.about': 'О нас',
     'nav.faq': 'Вопросы',
@@ -149,6 +153,11 @@ const translations: Record<Language, Record<string, string>> = {
     'admin.excerpt': 'Краткое описание',
     'admin.coverUrl': 'Ссылка на обложку',
     'admin.content_text': 'Содержание',
+    'admin.attachments': 'Вложения',
+    'admin.addFiles': 'Добавить файлы',
+    'admin.uploading': 'Загрузка...',
+    'post.attachments': 'Материалы',
+    'post.download': 'Скачать',
     'admin.addNew': 'Добавить',
     'admin.noItems': 'Элементов пока нет',
     'admin.inbox': 'Входящие',
@@ -225,6 +234,10 @@ const translations: Record<Language, Record<string, string>> = {
   },
   EN: {
     // Nav
+    // Site / Auth
+    'site.name': 'Peaceful Call',
+    'auth.backHome': 'Back to home',
+    'auth.tagline': 'Join the community',
     'nav.home': 'Home',
     'nav.about': 'About',
     'nav.faq': 'FAQ',
@@ -362,6 +375,11 @@ const translations: Record<Language, Record<string, string>> = {
     'admin.excerpt': 'Excerpt',
     'admin.coverUrl': 'Cover Image URL',
     'admin.content_text': 'Content',
+    'admin.attachments': 'Attachments',
+    'admin.addFiles': 'Add files',
+    'admin.uploading': 'Uploading...',
+    'post.attachments': 'Attachments',
+    'post.download': 'Download',
     'admin.addNew': 'Add',
     'admin.noItems': 'No items yet',
     'admin.inbox': 'Inbox',
@@ -438,6 +456,10 @@ const translations: Record<Language, Record<string, string>> = {
   },
   AR: {
     // Nav
+    // Site / Auth
+    'site.name': 'الدعوة السلمية',
+    'auth.backHome': 'العودة إلى الرئيسية',
+    'auth.tagline': 'انضم إلى المجتمع',
     'nav.home': 'الرئيسية',
     'nav.about': 'من نحن',
     'nav.faq': 'الأسئلة الشائعة',
@@ -575,6 +597,11 @@ const translations: Record<Language, Record<string, string>> = {
     'admin.excerpt': 'مقتطف',
     'admin.coverUrl': 'رابط صورة الغلاف',
     'admin.content_text': 'المحتوى',
+    'admin.attachments': 'المرفقات',
+    'admin.addFiles': 'إضافة ملفات',
+    'admin.uploading': 'جارٍ الرفع...',
+    'post.attachments': 'المرفقات',
+    'post.download': 'تنزيل',
     'admin.addNew': 'إضافة',
     'admin.noItems': 'لا توجد عناصر بعد',
     'admin.inbox': 'صندوق الوارد',

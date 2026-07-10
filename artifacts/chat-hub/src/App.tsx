@@ -12,13 +12,15 @@ import PostsPage from '@/pages/PostsPage';
 import MessagesPage from '@/pages/MessagesPage';
 import HadithsPage from '@/pages/HadithsPage';
 import SingleHadithPage from '@/pages/SingleHadithPage';
-import { Route, Switch, Router as WouterRouter, useLocation } from 'wouter';
+import { Route, Switch, Router as WouterRouter, useLocation, Link } from 'wouter';
 import { ClerkProvider, SignIn, SignUp, Show, useClerk } from '@clerk/react';
 import { publishableKeyFromHost } from '@clerk/react/internal';
-import { LanguageProvider } from '@/contexts/LanguageContext';
+import { ruRU, enUS, arSA } from '@clerk/localizations';
+import { LanguageProvider, useLanguage } from '@/contexts/LanguageContext';
 import { ThemeProvider } from '@/contexts/ThemeContext';
-import { useEffect, useRef } from 'react';
-import { AnimatePresence } from 'framer-motion';
+import { ArrowLeft } from 'lucide-react';
+import { useEffect, useRef, type ReactNode } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
 
 const queryClient = new QueryClient();
 
@@ -42,10 +44,9 @@ if (!clerkPubKey) {
 
 const clerkAppearance = {
   cssLayerName: 'clerk',
-  options: {
-    logoPlacement: 'inside' as const,
-    logoLinkUrl: basePath || '/',
-    logoImageUrl: `${window.location.origin}${basePath}/logo.png`,
+  layout: {
+    // Remove Clerk's "Development mode" badge from the components.
+    unsafe_disableDevelopmentModeWarnings: true,
   },
   variables: {
     colorPrimary: 'hsl(43 85% 58%)',
@@ -63,6 +64,8 @@ const clerkAppearance = {
     borderRadius: '0.75rem',
   },
   elements: {
+    // The branded logo lives in AuthShell, so hide Clerk's built-in one.
+    logoBox: 'hidden',
     rootBox: 'w-full flex justify-center',
     cardBox: 'rounded-3xl w-[440px] max-w-full overflow-hidden shadow-2xl border border-white/5 glass',
     card: '!shadow-none !border-0 !bg-transparent !rounded-none',
@@ -81,23 +84,73 @@ const clerkAppearance = {
   },
 };
 
+function AuthShell({ children }: { children: ReactNode }) {
+  const { t, isRtl } = useLanguage();
+  return (
+    <div
+      dir={isRtl ? 'rtl' : 'ltr'}
+      className="relative flex min-h-[100dvh] flex-col items-center justify-center overflow-hidden gradient-bg px-4 py-12"
+    >
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_right,hsl(var(--primary)/0.12),transparent_55%)]" />
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,hsl(var(--primary)/0.06),transparent_55%)]" />
+
+      <Link
+        href="/"
+        className={`absolute top-5 z-10 inline-flex items-center gap-2 rounded-full border border-border/40 bg-card/40 px-4 py-2 text-xs font-bold uppercase tracking-widest text-muted-foreground backdrop-blur-md transition-all hover:border-border hover:text-foreground ${
+          isRtl ? 'right-5' : 'left-5'
+        }`}
+      >
+        <ArrowLeft className={`h-3.5 w-3.5 ${isRtl ? 'rotate-180' : ''}`} />
+        {t('auth.backHome')}
+      </Link>
+
+      <Link
+        href="/"
+        className="group relative z-10 mb-7 flex flex-col items-center gap-3"
+      >
+        <div className="h-16 w-16 overflow-hidden rounded-2xl border border-primary/30 shadow-lg shadow-primary/10 transition-transform group-hover:scale-105">
+          <img
+            src="/logo-source.jpg"
+            alt={t('site.name')}
+            className="h-full w-full object-cover"
+          />
+        </div>
+        <div className="text-center">
+          <div className="font-serif text-xl font-bold tracking-wide text-foreground">
+            {t('site.name')}
+          </div>
+          <div className="text-xs uppercase tracking-widest text-muted-foreground">
+            {t('auth.tagline')}
+          </div>
+        </div>
+      </Link>
+
+      <div className="relative z-10 flex w-full justify-center">{children}</div>
+    </div>
+  );
+}
+
 function SignInPage() {
   return (
-    <div className="flex min-h-[100dvh] items-center justify-center bg-background px-4 relative overflow-hidden gradient-bg">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,hsl(var(--primary)/0.1),transparent_50%)] pointer-events-none" />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,hsl(var(--primary)/0.05),transparent_50%)] pointer-events-none" />
-      <SignIn routing="path" path={`${basePath}/sign-in`} signUpUrl={`${basePath}/sign-up`} />
-    </div>
+    <AuthShell>
+      <SignIn
+        routing="path"
+        path={`${basePath}/sign-in`}
+        signUpUrl={`${basePath}/sign-up`}
+      />
+    </AuthShell>
   );
 }
 
 function SignUpPage() {
   return (
-    <div className="flex min-h-[100dvh] items-center justify-center bg-background px-4 relative overflow-hidden gradient-bg">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,hsl(var(--primary)/0.1),transparent_50%)] pointer-events-none" />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,hsl(var(--primary)/0.05),transparent_50%)] pointer-events-none" />
-      <SignUp routing="path" path={`${basePath}/sign-up`} signInUrl={`${basePath}/sign-in`} />
-    </div>
+    <AuthShell>
+      <SignUp
+        routing="path"
+        path={`${basePath}/sign-up`}
+        signInUrl={`${basePath}/sign-in`}
+      />
+    </AuthShell>
   );
 }
 
@@ -127,38 +180,100 @@ function Router() {
 
   return (
     <AnimatePresence mode="wait">
-      <Switch key={location}>
-      <Route path="/" component={Home} />
-      <Route path="/sign-in/*?" component={SignInPage} />
-      <Route path="/sign-up/*?" component={SignUpPage} />
-      <Route path="/posts" component={PostsPage} />
-      <Route path="/posts/:slug" component={SinglePostPage} />
-      <Route path="/hadiths" component={HadithsPage} />
-      <Route path="/hadiths/:id" component={SingleHadithPage} />
+      <motion.div
+        key={location}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.25, ease: 'easeInOut' }}
+      >
+        <Switch location={location}>
+          <Route path="/" component={Home} />
+          <Route path="/sign-in/*?" component={SignInPage} />
+          <Route path="/sign-up/*?" component={SignUpPage} />
+          <Route path="/posts" component={PostsPage} />
+          <Route path="/posts/:slug" component={SinglePostPage} />
+          <Route path="/hadiths" component={HadithsPage} />
+          <Route path="/hadiths/:id" component={SingleHadithPage} />
 
-      <Route path="/portal">
-        <Show when="signed-in"><PortalPage /></Show>
-        <Show when="signed-out"><SignInPage /></Show>
-      </Route>
-      <Route path="/messages">
-        <Show when="signed-in"><MessagesPage /></Show>
-        <Show when="signed-out"><SignInPage /></Show>
-      </Route>
-      <Route path="/profile">
-        <Show when="signed-in"><ProfilePage /></Show>
-        <Show when="signed-out"><SignInPage /></Show>
-      </Route>
-      <Route path="/admin" component={AdminPage} />
-      <Route path="/admins" component={AdminsPage} />
+          <Route path="/portal">
+            <Show when="signed-in">
+              <PortalPage />
+            </Show>
+            <Show when="signed-out">
+              <SignInPage />
+            </Show>
+          </Route>
+          <Route path="/messages">
+            <Show when="signed-in">
+              <MessagesPage />
+            </Show>
+            <Show when="signed-out">
+              <SignInPage />
+            </Show>
+          </Route>
+          <Route path="/profile">
+            <Show when="signed-in">
+              <ProfilePage />
+            </Show>
+            <Show when="signed-out">
+              <SignInPage />
+            </Show>
+          </Route>
+          <Route path="/admin" component={AdminPage} />
+          <Route path="/admins" component={AdminsPage} />
 
-      <Route component={NotFound} />
-      </Switch>
+          <Route component={NotFound} />
+        </Switch>
+      </motion.div>
     </AnimatePresence>
   );
 }
 
 function ClerkProviderWithRoutes() {
   const [, setLocation] = useLocation();
+  const { language } = useLanguage();
+  const baseLocalization =
+    language === 'RU' ? ruRU : language === 'AR' ? arSA : enUS;
+  const authText = {
+    RU: {
+      signInTitle: 'С возвращением',
+      signInSubtitle: 'Войдите, чтобы продолжить',
+      signUpTitle: 'Создайте аккаунт',
+      signUpSubtitle: 'Присоединяйтесь к сообществу',
+    },
+    EN: {
+      signInTitle: 'Welcome back',
+      signInSubtitle: 'Sign in to continue',
+      signUpTitle: 'Create your account',
+      signUpSubtitle: 'Join the community',
+    },
+    AR: {
+      signInTitle: 'مرحبًا بعودتك',
+      signInSubtitle: 'سجّل الدخول للمتابعة',
+      signUpTitle: 'أنشئ حسابك',
+      signUpSubtitle: 'انضم إلى المجتمع',
+    },
+  }[language];
+  const clerkLocalization = {
+    ...baseLocalization,
+    signIn: {
+      ...baseLocalization.signIn,
+      start: {
+        ...baseLocalization.signIn?.start,
+        title: authText.signInTitle,
+        subtitle: authText.signInSubtitle,
+      },
+    },
+    signUp: {
+      ...baseLocalization.signUp,
+      start: {
+        ...baseLocalization.signUp?.start,
+        title: authText.signUpTitle,
+        subtitle: authText.signUpSubtitle,
+      },
+    },
+  };
 
   return (
     <ClerkProvider
@@ -167,23 +282,7 @@ function ClerkProviderWithRoutes() {
       appearance={clerkAppearance}
       signInUrl={`${basePath}/sign-in`}
       signUpUrl={`${basePath}/sign-up`}
-      localization={{
-        signIn: {
-          start: {
-            title: 'С возвращением',
-            subtitle: 'Войдите в свой аккаунт',
-            actionText: 'Нет аккаунта?',
-          },
-        },
-        signUp: {
-          start: {
-            title: 'Создайте аккаунт',
-            subtitle: 'Присоединяйтесь к Peaceful Call',
-            actionText: 'Уже есть аккаунт?',
-          },
-        },
-        socialButtonsBlockButton: 'Продолжить через {{provider|titleize}}',
-      }}
+      localization={clerkLocalization as typeof baseLocalization}
       routerPush={(to) => setLocation(stripBase(to))}
       routerReplace={(to) => setLocation(stripBase(to), { replace: true })}
     >

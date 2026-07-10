@@ -6,7 +6,7 @@ export const adminsTable = pgTable("admins", {
   email: text("email").notNull(),
   name: text("name").notNull().default(""),
   role: text("role", { enum: ["owner", "editor"] }).notNull().default("editor"),
-  createdAt: timestamp("created_at").notNull().defaultNow(),
+  createdAt: timestamp("created_at", { mode: "string" }).notNull().defaultNow(),
 });
 
 export type Admin = typeof adminsTable.$inferSelect;

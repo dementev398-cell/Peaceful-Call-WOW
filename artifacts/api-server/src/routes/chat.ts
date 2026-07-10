@@ -106,7 +106,7 @@ router.get(
             ? "Администрация"
             : other?.name || other?.email || "Администрация",
         otherAvatarUrl: other?.avatarUrl ?? null,
-        lastMessageAt: c.lastMessageAt.toISOString(),
+        lastMessageAt: c.lastMessageAt,
         lastMessagePreview: c.lastMessagePreview,
         unread,
       };
@@ -335,7 +335,7 @@ router.patch(
     const isA = convo.userAClerkId === me.clerkUserId;
     await db
       .update(conversationsTable)
-      .set(isA ? { lastReadAtA: new Date() } : { lastReadAtB: new Date() })
+      .set(isA ? { lastReadAtA: new Date().toISOString() } : { lastReadAtB: new Date().toISOString() })
       .where(eq(conversationsTable.id, id));
     res.sendStatus(204);
   },
