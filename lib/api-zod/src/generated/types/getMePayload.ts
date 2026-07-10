@@ -15,6 +15,8 @@ export type GetMePayload = {
   clerkUserId?: string;
   email?: string;
   name?: string;
+  /** @nullable */
+  avatarUrl?: string | null;
   role?: GetMePayloadRole;
   createdAt?: string;
 } | null;

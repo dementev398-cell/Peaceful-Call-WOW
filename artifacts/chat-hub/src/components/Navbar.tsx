@@ -1,4 +1,4 @@
-import { Link } from 'wouter';
+import { Link, useLocation } from 'wouter';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useState, useEffect } from 'react';
 import { useContentDict } from '@/hooks/use-content';
@@ -16,12 +16,25 @@ export function Navbar() {
   const { isSignedIn } = useUser();
   const { data: me } = useGetMe();
   const isAdmin = !!me && (me.role === 'owner' || me.role === 'editor');
+  const [location] = useLocation();
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  // When we're already on the home page, a wouter <Link> to "/#about" won't
+  // trigger a navigation (the path doesn't change), so it wouldn't scroll.
+  // Scroll directly in that case; otherwise let the Link navigate to "/"
+  // and Home.tsx's mount effect will scroll once the sections are rendered.
+  const handleAnchorClick = (id: string) => (e: React.MouseEvent) => {
+    if (location === '/') {
+      e.preventDefault();
+      document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      setMenuOpen(false);
+    }
+  };
 
   const logoImg = dict['site.logo'] || '/logo-source.jpg';
   const siteName = dict['site.name'] || t('site.name');
@@ -49,14 +62,14 @@ export function Navbar() {
 
         {/* Desktop Nav Links */}
         <nav className="hidden md:flex items-center gap-5">
-          <a href="#about" className="text-xs font-bold tracking-widest text-muted-foreground hover:text-foreground transition-colors uppercase flex items-center gap-1.5">
+          <Link href="/#about" onClick={handleAnchorClick('about')} className="text-xs font-bold tracking-widest text-muted-foreground hover:text-foreground transition-colors uppercase flex items-center gap-1.5">
             <Users className="w-3.5 h-3.5" />
             {t('nav.about')}
-          </a>
-          <a href="#faq" className="text-xs font-bold tracking-widest text-muted-foreground hover:text-foreground transition-colors uppercase flex items-center gap-1.5">
+          </Link>
+          <Link href="/#faq" onClick={handleAnchorClick('faq')} className="text-xs font-bold tracking-widest text-muted-foreground hover:text-foreground transition-colors uppercase flex items-center gap-1.5">
             <HelpCircle className="w-3.5 h-3.5" />
             {t('nav.faq')}
-          </a>
+          </Link>
           <Link href="/posts" className="text-xs font-bold tracking-widest text-muted-foreground hover:text-primary transition-colors uppercase flex items-center gap-1.5">
             <BookOpen className="w-3.5 h-3.5" />
             {t('nav.posts')}
@@ -131,14 +144,14 @@ export function Navbar() {
             transition={{ duration: 0.25, ease: "easeOut" }}
             className="md:hidden absolute top-full left-0 right-0 glass-strong border-b border-border/30 px-5 py-6 flex flex-col gap-2 shadow-2xl origin-top"
           >
-            <a href="#about" onClick={() => setMenuOpen(false)} className="flex items-center gap-3 text-base font-semibold tracking-widest text-muted-foreground hover:text-foreground transition-colors uppercase py-3 border-b border-border/20">
+            <Link href="/#about" onClick={(e) => { handleAnchorClick('about')(e); setMenuOpen(false); }} className="flex items-center gap-3 text-base font-semibold tracking-widest text-muted-foreground hover:text-foreground transition-colors uppercase py-3 border-b border-border/20">
               <Users className="w-5 h-5 text-muted-foreground" />
               {t('nav.about')}
-            </a>
-            <a href="#faq" onClick={() => setMenuOpen(false)} className="flex items-center gap-3 text-base font-semibold tracking-widest text-muted-foreground hover:text-foreground transition-colors uppercase py-3 border-b border-border/20">
+            </Link>
+            <Link href="/#faq" onClick={(e) => { handleAnchorClick('faq')(e); setMenuOpen(false); }} className="flex items-center gap-3 text-base font-semibold tracking-widest text-muted-foreground hover:text-foreground transition-colors uppercase py-3 border-b border-border/20">
               <HelpCircle className="w-5 h-5 text-muted-foreground" />
               {t('nav.faq')}
-            </a>
+            </Link>
             <Link href="/posts" onClick={() => setMenuOpen(false)} className="flex items-center gap-3 text-base font-semibold tracking-widest text-muted-foreground hover:text-primary transition-colors uppercase py-3 border-b border-border/20">
               <BookOpen className="w-5 h-5 text-primary/70" />
               {t('nav.posts')}

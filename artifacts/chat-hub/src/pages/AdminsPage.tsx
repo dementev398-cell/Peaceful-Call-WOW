@@ -6,15 +6,21 @@ import { useLocation } from "wouter";
 import { useUser } from "@clerk/react";
 import { ScrollReveal } from "@/components/ScrollReveal";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useContentDict } from "@/hooks/use-content";
 import { Loader2, MessageCircle, Crown, Shield } from "lucide-react";
 import { motion } from "framer-motion";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { attachmentSrc } from "@/lib/storage";
 
 export default function AdminsPage() {
   const { data: admins, isLoading } = useListAdmins();
   const { t, isRtl } = useLanguage();
+  const { dict } = useContentDict();
   const [, navigate] = useLocation();
   const { isSignedIn } = useUser();
   const startDirect = useStartDirectConversation();
+
+  const logoImg = dict['site.logo'] || '/logo-source.jpg';
 
   const handleWriteMessage = (clerkUserId: string) => {
     if (!isSignedIn) {
@@ -56,54 +62,61 @@ export default function AdminsPage() {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {admins?.map((admin, idx) => (
-              <ScrollReveal key={admin.id} delay={String(idx * 100)}>
-                <motion.div
-                  whileHover={{ y: -4 }}
-                  transition={{ duration: 0.2 }}
-                  className="glass rounded-[2rem] p-8 text-center flex flex-col items-center border border-border/30 hover:border-primary/30 transition-all duration-300 hover:shadow-xl hover:shadow-primary/5"
-                  dir={isRtl ? 'rtl' : 'ltr'}
-                >
-                  <div className={`w-24 h-24 rounded-full flex items-center justify-center mb-6 border-2 relative ${
-                    admin.role === 'owner'
-                      ? 'bg-primary/20 border-primary/50 glow-gold-sm'
-                      : 'bg-muted/50 border-border'
-                  }`}>
-                    {admin.role === 'owner' ? (
-                      <Crown className="w-10 h-10 text-primary" />
-                    ) : (
-                      <Shield className="w-10 h-10 text-muted-foreground" />
-                    )}
-                  </div>
-                  <h3 className="text-2xl font-serif font-bold text-foreground mb-2">
-                    {admin.name}
-                  </h3>
-                  <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest mb-6 border ${
-                    admin.role === 'owner'
-                      ? 'bg-primary/10 text-primary border-primary/20'
-                      : 'bg-muted/50 text-muted-foreground border-border/50'
-                  }`}>
-                    {admin.role === 'owner' ? (
-                      <><Crown className="w-3 h-3" /> {t('admins.founder')}</>
-                    ) : (
-                      <><Shield className="w-3 h-3" /> {t('admins.admin')}</>
-                    )}
-                  </span>
-                  <button
-                    onClick={() => handleWriteMessage(admin.clerkUserId)}
-                    disabled={startDirect.isPending}
-                    className="mt-auto inline-flex items-center justify-center w-full h-12 rounded-full border border-primary/40 text-primary hover:bg-primary hover:text-primary-foreground font-semibold tracking-wide transition-all duration-300 gap-2 hover:glow-gold-sm disabled:opacity-60"
+            {admins?.map((admin, idx) => {
+              const avatarSrc = admin.avatarUrl
+                ? attachmentSrc(admin.avatarUrl)
+                : logoImg;
+
+              return (
+                <ScrollReveal key={admin.id} delay={String(idx * 100)}>
+                  <motion.div
+                    whileHover={{ y: -4 }}
+                    transition={{ duration: 0.2 }}
+                    className="glass rounded-[2rem] p-8 text-center flex flex-col items-center border border-border/30 hover:border-primary/30 transition-all duration-300 hover:shadow-xl hover:shadow-primary/5"
+                    dir={isRtl ? 'rtl' : 'ltr'}
                   >
-                    {startDirect.isPending ? (
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                    ) : (
-                      <MessageCircle className="w-4 h-4" />
-                    )}
-                    {t('admins.writeMessage')}
-                  </button>
-                </motion.div>
-              </ScrollReveal>
-            ))}
+                    <div className={`w-24 h-24 rounded-full flex items-center justify-center mb-6 border-2 relative overflow-hidden ${
+                      admin.role === 'owner'
+                        ? 'border-primary/50 glow-gold-sm'
+                        : 'border-border'
+                    }`}>
+                      <Avatar className="w-24 h-24">
+                        <AvatarImage src={avatarSrc} className="object-cover" />
+                        <AvatarFallback className={admin.role === 'owner' ? 'bg-primary/20' : 'bg-muted/50'}>
+                          <img src={logoImg} alt="logo" className="w-full h-full object-cover" />
+                        </AvatarFallback>
+                      </Avatar>
+                    </div>
+                    <h3 className="text-2xl font-serif font-bold text-foreground mb-2">
+                      {admin.name}
+                    </h3>
+                    <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest mb-6 border ${
+                      admin.role === 'owner'
+                        ? 'bg-primary/10 text-primary border-primary/20'
+                        : 'bg-muted/50 text-muted-foreground border-border/50'
+                    }`}>
+                      {admin.role === 'owner' ? (
+                        <><Crown className="w-3 h-3" /> {t('admins.founder')}</>
+                      ) : (
+                        <><Shield className="w-3 h-3" /> {t('admins.admin')}</>
+                      )}
+                    </span>
+                    <button
+                      onClick={() => handleWriteMessage(admin.clerkUserId)}
+                      disabled={startDirect.isPending}
+                      className="mt-auto inline-flex items-center justify-center w-full h-12 rounded-full border border-primary/40 text-primary hover:bg-primary hover:text-primary-foreground font-semibold tracking-wide transition-all duration-300 gap-2 hover:glow-gold-sm disabled:opacity-60"
+                    >
+                      {startDirect.isPending ? (
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                      ) : (
+                        <MessageCircle className="w-4 h-4" />
+                      )}
+                      {t('admins.writeMessage')}
+                    </button>
+                  </motion.div>
+                </ScrollReveal>
+              );
+            })}
           </div>
         )}
       </main>

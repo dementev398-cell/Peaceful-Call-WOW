@@ -26,6 +26,7 @@ import {
   useReplyToMessage,
   useDeleteMessage,
   useGetUnreadCount,
+  useUpdateMyAdminAvatar,
   type ContentItem,
   type PostAttachment
 } from '@workspace/api-client-react';
@@ -37,14 +38,16 @@ import { useToast } from '@/hooks/use-toast';
 import {
   Loader2, LogOut, Plus, Trash2, Edit2, Check, X,
   Mail, MailOpen, Reply, MessageCircle, Crown, Shield,
-  ShieldAlert, LogIn, Users, Ban, VolumeX, Eye,
+  ShieldAlert, LogIn, Users, Ban,
   ChevronLeft, FileText, Settings, LayoutDashboard,
-  Heart, ScrollText, Paperclip, Film
+  ScrollText, Paperclip, Film, Camera
 } from 'lucide-react';
 import { useClerk, useUser } from '@clerk/react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useContentDict } from '@/hooks/use-content';
 import { attachmentSrc, getAttachmentType, resolvePostCover } from '@/lib/storage';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { motion } from 'framer-motion';
 
 async function clerkFetch(path: string, options: RequestInit = {}) {
@@ -131,50 +134,51 @@ export default function AdminPage() {
     : (language === 'RU' ? 'Редактор' : language === 'AR' ? 'محرر' : 'Editor');
 
   return (
-    <div className="min-h-screen bg-background text-foreground flex flex-col">
+    <div className="min-h-screen bg-background text-foreground flex flex-col gradient-bg">
       {/* Header */}
-      <header className="border-b border-border/40 bg-card/60 backdrop-blur-md sticky top-0 z-20">
-        <div className="container mx-auto px-4 sm:px-6 h-14 flex items-center justify-between gap-3">
+      <header className="border-b border-primary/10 bg-card/70 backdrop-blur-xl sticky top-0 z-20 shadow-sm shadow-primary/5">
+        <div className="container mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-3">
           <div className="flex items-center gap-3 min-w-0">
-            <div className="flex items-center gap-2">
-              <LayoutDashboard className="w-4 h-4 text-primary flex-shrink-0" />
-              <span className="font-serif font-bold text-sm sm:text-base text-foreground truncate">
-                {t('admin.panel')}
-              </span>
+            <div className="w-8 h-8 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center flex-shrink-0">
+              <LayoutDashboard className="w-4 h-4 text-primary" />
             </div>
-            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-primary/10 text-primary uppercase tracking-wide border border-primary/20 flex-shrink-0">
+            <span className="font-serif font-bold text-sm sm:text-base text-foreground truncate">
+              {t('admin.panel')}
+            </span>
+            <span className="text-[10px] font-bold px-2.5 py-1 rounded-full bg-primary/10 text-primary uppercase tracking-widest border border-primary/20 flex-shrink-0">
               {roleLabel}
             </span>
           </div>
-          <div className="flex items-center gap-2 flex-shrink-0">
+          <div className="flex items-center gap-3 flex-shrink-0">
             <span className="text-xs text-muted-foreground hidden md:block truncate max-w-[180px]">{user.email}</span>
-            <Button variant="ghost" size="sm" onClick={() => signOut({ redirectUrl: '/' })} className="gap-1.5 text-muted-foreground hover:text-foreground h-8">
+            <AdminAvatarWidget adminId={user.id ?? 0} />
+            <Button variant="ghost" size="sm" onClick={() => signOut({ redirectUrl: '/' })} className="gap-1.5 text-muted-foreground hover:text-foreground h-9 rounded-xl border border-transparent hover:border-border/50">
               <LogOut className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline text-xs">{t('admin.signOut')}</span>
+              <span className="hidden sm:inline text-xs font-semibold">{t('admin.signOut')}</span>
             </Button>
           </div>
         </div>
       </header>
 
-      <main className="flex-grow container mx-auto px-4 sm:px-6 py-6 sm:py-8 max-w-6xl mt-14 sm:mt-16">
+      <main className="flex-grow container mx-auto px-4 sm:px-6 py-8 max-w-6xl">
         <Tabs defaultValue={tabs[0]} className="w-full" dir="ltr">
-          <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0 mb-7 pb-2">
-            <TabsList className="inline-flex bg-card/60 glass-panel border border-border/40 p-1.5 rounded-2xl gap-1 min-w-max">
+          <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0 mb-8 pb-2">
+            <TabsList className="inline-flex bg-card/40 glass border border-border/30 p-1.5 rounded-2xl gap-1 min-w-max shadow-inner">
               {isOwner && (
-                <TabsTrigger value="content" className="rounded-xl text-xs sm:text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg whitespace-nowrap px-4 py-2.5 gap-2 transition-all">
+                <TabsTrigger value="content" className="rounded-xl text-xs sm:text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg data-[state=active]:glow-gold-sm whitespace-nowrap px-4 py-2.5 gap-2 transition-all font-semibold text-muted-foreground data-[state=active]:font-bold">
                   <Settings className="w-4 h-4" />
                   {t('admin.content')}
                 </TabsTrigger>
               )}
-              <TabsTrigger value="posts" className="rounded-xl text-xs sm:text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg whitespace-nowrap px-4 py-2.5 gap-2 transition-all">
+              <TabsTrigger value="posts" className="rounded-xl text-xs sm:text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg data-[state=active]:glow-gold-sm whitespace-nowrap px-4 py-2.5 gap-2 transition-all font-semibold text-muted-foreground data-[state=active]:font-bold">
                 <FileText className="w-4 h-4" />
                 {t('admin.posts')}
               </TabsTrigger>
-              <TabsTrigger value="hadiths" className="rounded-xl text-xs sm:text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg whitespace-nowrap px-4 py-2.5 gap-2 transition-all">
+              <TabsTrigger value="hadiths" className="rounded-xl text-xs sm:text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg data-[state=active]:glow-gold-sm whitespace-nowrap px-4 py-2.5 gap-2 transition-all font-semibold text-muted-foreground data-[state=active]:font-bold">
                 <ScrollText className="w-4 h-4" />
                 {t('admin.hadiths')}
               </TabsTrigger>
-              <TabsTrigger value="messages" className="rounded-xl text-xs sm:text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg whitespace-nowrap px-4 py-2.5 gap-2 relative transition-all">
+              <TabsTrigger value="messages" className="rounded-xl text-xs sm:text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg data-[state=active]:glow-gold-sm whitespace-nowrap px-4 py-2.5 gap-2 relative transition-all font-semibold text-muted-foreground data-[state=active]:font-bold">
                 <MessageCircle className="w-4 h-4" />
                 {t('admin.messages')}
                 {unreadCount > 0 && (
@@ -184,13 +188,13 @@ export default function AdminPage() {
                 )}
               </TabsTrigger>
               {isOwner && (
-                <TabsTrigger value="users" className="rounded-xl text-xs sm:text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg whitespace-nowrap px-4 py-2.5 gap-2 transition-all">
+                <TabsTrigger value="users" className="rounded-xl text-xs sm:text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg data-[state=active]:glow-gold-sm whitespace-nowrap px-4 py-2.5 gap-2 transition-all font-semibold text-muted-foreground data-[state=active]:font-bold">
                   <Users className="w-4 h-4" />
                   {t('admin.users')}
                 </TabsTrigger>
               )}
               {isOwner && (
-                <TabsTrigger value="admins" className="rounded-xl text-xs sm:text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg whitespace-nowrap px-4 py-2.5 gap-2 transition-all">
+                <TabsTrigger value="admins" className="rounded-xl text-xs sm:text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg data-[state=active]:glow-gold-sm whitespace-nowrap px-4 py-2.5 gap-2 transition-all font-semibold text-muted-foreground data-[state=active]:font-bold">
                   <Shield className="w-4 h-4" />
                   {t('admin.admins')}
                 </TabsTrigger>
@@ -224,6 +228,91 @@ export default function AdminPage() {
           )}
         </Tabs>
       </main>
+    </div>
+  );
+}
+
+// ── Admin Avatar Widget (shown in header) ─────────────────────────────────────
+function AdminAvatarWidget({ adminId }: { adminId: number }) {
+  const { data: admins } = useListAdmins();
+  const updateAvatar = useUpdateMyAdminAvatar();
+  const requestUploadUrl = useRequestUploadUrl();
+  const { dict } = useContentDict();
+  const { toast } = useToast();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [isUploading, setIsUploading] = useState(false);
+
+  const logoImg = dict['site.logo'] || '/logo-source.jpg';
+  // Find current admin in the list to get avatarUrl
+  const meAdmin = admins?.find((a) => a.id === adminId);
+  const avatarSrc = meAdmin?.avatarUrl ? attachmentSrc(meAdmin.avatarUrl) : logoImg;
+
+  const handleUpload = async (files: FileList | null) => {
+    const file = files?.[0];
+    if (!file) return;
+    setIsUploading(true);
+    try {
+      const { uploadURL, objectPath } = await requestUploadUrl.mutateAsync({
+        data: { name: file.name, size: file.size, contentType: file.type },
+      });
+      await fetch(uploadURL, { method: 'PUT', body: file, headers: { 'Content-Type': file.type } });
+      await updateAvatar.mutateAsync({ data: { avatarUrl: objectPath } });
+      toast({ title: '✓', description: 'Аватар обновлён' });
+    } catch (e: any) {
+      toast({ title: 'Error', description: e.message, variant: 'destructive' });
+    } finally {
+      setIsUploading(false);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    }
+  };
+
+  const handleRemove = async () => {
+    try {
+      await updateAvatar.mutateAsync({ data: { avatarUrl: null } });
+      toast({ title: '✓', description: 'Аватар удалён' });
+    } catch (e: any) {
+      toast({ title: 'Error', description: e.message, variant: 'destructive' });
+    }
+  };
+
+  return (
+    <div className="flex items-center gap-1">
+      <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={e => handleUpload(e.target.files)} />
+      <div className="relative group">
+        <Avatar className="w-8 h-8 border border-primary/30 cursor-pointer" onClick={() => fileInputRef.current?.click()}>
+          <AvatarImage src={avatarSrc} className="object-cover" />
+          <AvatarFallback className="bg-primary/10">
+            <img src={logoImg} alt="logo" className="w-full h-full object-cover" />
+          </AvatarFallback>
+        </Avatar>
+        {isUploading && (
+          <div className="absolute inset-0 flex items-center justify-center rounded-full bg-background/70">
+            <Loader2 className="w-3.5 h-3.5 animate-spin text-primary" />
+          </div>
+        )}
+      </div>
+      <div className="relative group hidden sm:block">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-7 w-7 text-muted-foreground/50 hover:text-primary rounded-lg"
+          onClick={() => fileInputRef.current?.click()}
+          title="Изменить аватар"
+        >
+          <Camera className="w-3 h-3" />
+        </Button>
+        {meAdmin?.avatarUrl && (
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-7 w-7 text-muted-foreground/50 hover:text-destructive rounded-lg"
+            onClick={handleRemove}
+            title="Удалить аватар"
+          >
+            <X className="w-3 h-3" />
+          </Button>
+        )}
+      </div>
     </div>
   );
 }
@@ -745,7 +834,33 @@ function PostsManager() {
   const [editingPost, setEditingPost] = useState<any>(null);
   const requestUploadUrl = useRequestUploadUrl();
   const [uploading, setUploading] = useState(false);
+  const [uploadingCover, setUploadingCover] = useState(false);
+  const [coverMode, setCoverMode] = useState<'url' | 'upload'>('url');
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const coverFileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleCoverFile = async (files: FileList | null) => {
+    const file = files?.[0];
+    if (!file) return;
+    setUploadingCover(true);
+    try {
+      const { uploadURL, objectPath } = await requestUploadUrl.mutateAsync({
+        data: { name: file.name, size: file.size, contentType: file.type },
+      });
+      const putRes = await fetch(uploadURL, {
+        method: 'PUT',
+        body: file,
+        headers: { 'Content-Type': file.type },
+      });
+      if (!putRes.ok) throw new Error(`Upload failed: ${file.name}`);
+      setEditingPost((prev: any) => ({ ...prev, coverImageUrl: objectPath }));
+    } catch (error: any) {
+      toast({ title: 'Error', description: error.message, variant: 'destructive' });
+    } finally {
+      setUploadingCover(false);
+      if (coverFileInputRef.current) coverFileInputRef.current.value = '';
+    }
+  };
 
   const handleAddFiles = async (files: FileList | null) => {
     if (!files || files.length === 0) return;
@@ -841,12 +956,60 @@ function PostsManager() {
             <Textarea value={editingPost.excerpt || ''} onChange={e => setEditingPost({...editingPost, excerpt: e.target.value})} className="bg-background/50 min-h-[72px] resize-none text-sm rounded-xl" />
           </div>
           <div>
-            <label className="text-xs font-medium text-muted-foreground mb-1.5 block">{t('admin.coverUrl')}</label>
-            <Input value={editingPost.coverImageUrl || ''} onChange={e => setEditingPost({...editingPost, coverImageUrl: e.target.value})} className="bg-background/50 text-sm h-9" placeholder="https://..." />
+            <div className="flex items-center justify-between mb-1.5">
+              <label className="text-xs font-medium text-muted-foreground block">{t('admin.coverUrl')}</label>
+              <div className="flex items-center gap-1 bg-muted/30 p-0.5 rounded-full border border-border/40">
+                <button
+                  type="button"
+                  onClick={() => setCoverMode('url')}
+                  className={`text-[11px] font-semibold px-2.5 py-1 rounded-full transition-all ${coverMode === 'url' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:text-foreground'}`}
+                >
+                  {t('admin.coverModeUrl')}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setCoverMode('upload')}
+                  className={`text-[11px] font-semibold px-2.5 py-1 rounded-full transition-all ${coverMode === 'upload' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:text-foreground'}`}
+                >
+                  {t('admin.coverModeUpload')}
+                </button>
+              </div>
+            </div>
+            {coverMode === 'url' ? (
+              <Input value={editingPost.coverImageUrl || ''} onChange={e => setEditingPost({...editingPost, coverImageUrl: e.target.value})} className="bg-background/50 text-sm h-9" placeholder="https://..." />
+            ) : (
+              <>
+                <input
+                  ref={coverFileInputRef}
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={e => handleCoverFile(e.target.files)}
+                />
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => coverFileInputRef.current?.click()}
+                  disabled={uploadingCover}
+                  className="rounded-full gap-2 h-9 text-sm w-full"
+                >
+                  {uploadingCover ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Paperclip className="w-3.5 h-3.5" />}
+                  {t('admin.coverUploadBtn')}
+                </Button>
+              </>
+            )}
           </div>
           {editingPost.coverImageUrl && (
-            <div className="rounded-xl overflow-hidden border border-border/40 h-40">
+            <div className="rounded-xl overflow-hidden border border-border/40 h-40 relative group">
               <img src={editingPost.coverImageUrl} alt="Cover preview" className="w-full h-full object-cover" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
+              <button
+                type="button"
+                onClick={() => setEditingPost({...editingPost, coverImageUrl: ''})}
+                className="absolute top-2 right-2 w-7 h-7 rounded-full bg-background/80 text-foreground flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-destructive hover:text-destructive-foreground"
+              >
+                <Trash2 className="w-3.5 h-3.5" />
+              </button>
             </div>
           )}
           <div>

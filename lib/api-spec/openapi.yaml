@@ -20,6 +20,8 @@ tags:
     description: Comments and reactions on posts
   - name: hadiths
     description: Hadiths with authenticity grading
+  - name: hadith-interactions
+    description: Comments and reactions on hadiths
   - name: admins
     description: Admin/team management
   - name: messages
@@ -28,6 +30,8 @@ tags:
     description: Direct and support chat
   - name: storage
     description: File storage
+  - name: user-profiles
+    description: User nickname and custom avatar profiles
 
 paths:
   /healthz:
@@ -817,6 +821,172 @@ paths:
         "204":
           description: Marked read
 
+  # ── Hadith interactions ────────────────────────────────────────────────
+  /hadiths/{id}/interactions:
+    get:
+      operationId: getHadithInteractions
+      tags: [hadith-interactions]
+      summary: Get comments and reaction counts for a hadith
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "200":
+          description: Interactions
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HadithInteractions"
+
+  /hadiths/{id}/comments:
+    post:
+      operationId: createHadithComment
+      tags: [hadith-interactions]
+      summary: Add a comment to a hadith (signed-in users only)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CommentInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HadithComment"
+
+  /hadiths/{id}/comments/{commentId}:
+    delete:
+      operationId: deleteHadithComment
+      tags: [hadith-interactions]
+      summary: Delete a hadith comment (own comment or admin)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+        - name: commentId
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "204":
+          description: Deleted
+
+  /hadiths/{id}/react:
+    post:
+      operationId: reactToHadith
+      tags: [hadith-interactions]
+      summary: Like or dislike a hadith (toggle, signed-in users only)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ReactionInput"
+      responses:
+        "200":
+          description: Current reaction state
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ReactToHadithPayload"
+
+  # ── User profiles ──────────────────────────────────────────────────────
+  /profile/me:
+    get:
+      operationId: getMyProfile
+      tags: [user-profiles]
+      summary: Get current user's profile (creates default on first access)
+      responses:
+        "200":
+          description: User profile
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserProfile"
+    patch:
+      operationId: updateMyProfile
+      tags: [user-profiles]
+      summary: Update current user's nickname and/or avatarUrl
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserProfileUpdate"
+      responses:
+        "200":
+          description: Updated profile
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserProfile"
+        "429":
+          description: Nickname cooldown not expired
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorPayload"
+
+  /profile/{clerkUserId}:
+    get:
+      operationId: getUserProfile
+      tags: [user-profiles]
+      summary: Get another user's public profile
+      parameters:
+        - name: clerkUserId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: User profile
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserProfile"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorPayload"
+
+  # ── Admin avatar ───────────────────────────────────────────────────────
+  /admins/me/avatar:
+    patch:
+      operationId: updateMyAdminAvatar
+      tags: [admins]
+      summary: Update current admin's own avatarUrl
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AdminAvatarUpdate"
+      responses:
+        "200":
+          description: Updated admin
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminWithAvatar"
+
   # ── Storage ────────────────────────────────────────────────────────────
   /storage/uploads/request-url:
     post:
@@ -869,6 +1039,7 @@ components:
         clerkUserId: { type: string }
         email: { type: string }
         name: { type: string }
+        avatarUrl: { type: ["string", "null"] }
         role:
           type: string
           enum: [owner, editor]
@@ -881,6 +1052,7 @@ components:
         clerkUserId: { type: string }
         email: { type: string }
         name: { type: string }
+        avatarUrl: { type: ["string", "null"] }
         role:
           type: string
           enum: [owner, editor]
@@ -1098,6 +1270,26 @@ components:
           type: ["string", "null"]
           enum: [like, dislike, null]
 
+    # ── Admin with avatar ──────────────────────────────────────────────
+    AdminWithAvatar:
+      type: object
+      required: [id, clerkUserId, email, name, role, createdAt]
+      properties:
+        id: { type: integer }
+        clerkUserId: { type: string }
+        email: { type: string }
+        name: { type: string }
+        role:
+          type: string
+          enum: [owner, editor]
+        avatarUrl: { type: ["string", "null"] }
+        createdAt: { type: string }
+
+    AdminAvatarUpdate:
+      type: object
+      properties:
+        avatarUrl: { type: ["string", "null"] }
+
     # ── Hadiths ────────────────────────────────────────────────────────
     HadithGrade:
       type: string
@@ -1161,6 +1353,60 @@ components:
 
     UpdateHadithPayload:
       $ref: "#/components/schemas/Hadith"
+
+    # ── Hadith interactions ────────────────────────────────────────────
+    HadithComment:
+      type: object
+      required: [id, hadithId, authorName, isAdmin, content, createdAt]
+      properties:
+        id: { type: integer }
+        hadithId: { type: integer }
+        authorClerkId: { type: ["string", "null"] }
+        authorName: { type: string }
+        authorAvatarUrl: { type: ["string", "null"] }
+        isAdmin: { type: boolean }
+        content: { type: string }
+        createdAt: { type: string }
+
+    HadithInteractions:
+      type: object
+      required: [comments, likes, dislikes, myReaction]
+      properties:
+        comments:
+          type: array
+          items:
+            $ref: "#/components/schemas/HadithComment"
+        likes: { type: integer }
+        dislikes: { type: integer }
+        myReaction:
+          type: ["string", "null"]
+          enum: [like, dislike, null]
+
+    ReactToHadithPayload:
+      type: object
+      required: [myReaction]
+      properties:
+        myReaction:
+          type: ["string", "null"]
+          enum: [like, dislike, null]
+
+    # ── User profiles ──────────────────────────────────────────────────
+    UserProfile:
+      type: object
+      required: [id, clerkUserId, nickname, nicknameUpdatedAt, createdAt]
+      properties:
+        id: { type: integer }
+        clerkUserId: { type: string }
+        nickname: { type: string }
+        avatarUrl: { type: ["string", "null"] }
+        nicknameUpdatedAt: { type: string }
+        createdAt: { type: string }
+
+    UserProfileUpdate:
+      type: object
+      properties:
+        nickname: { type: string, minLength: 1 }
+        avatarUrl: { type: ["string", "null"] }
 
     # ── Messages ───────────────────────────────────────────────────────
     Message:

@@ -21,6 +21,7 @@ import { ThemeProvider } from '@/contexts/ThemeContext';
 import { ArrowLeft } from 'lucide-react';
 import { useEffect, useRef, type ReactNode } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
+import { NicknameGate } from '@/components/NicknameGate';
 
 const queryClient = new QueryClient();
 
@@ -198,7 +199,9 @@ function Router() {
 
           <Route path="/portal">
             <Show when="signed-in">
-              <PortalPage />
+              <NicknameGate>
+                <PortalPage />
+              </NicknameGate>
             </Show>
             <Show when="signed-out">
               <SignInPage />
@@ -206,7 +209,9 @@ function Router() {
           </Route>
           <Route path="/messages">
             <Show when="signed-in">
-              <MessagesPage />
+              <NicknameGate>
+                <MessagesPage />
+              </NicknameGate>
             </Show>
             <Show when="signed-out">
               <SignInPage />

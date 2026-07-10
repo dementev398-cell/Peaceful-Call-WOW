@@ -21,8 +21,10 @@ import type {
 
 import type {
   Admin,
+  AdminAvatarUpdate,
   AdminInput,
   AdminRoleUpdate,
+  AdminWithAvatar,
   ChatMessage,
   ChatMessageInput,
   ClerkUserSummary,
@@ -32,7 +34,9 @@ import type {
   GetMessagePayload,
   GetUnreadCountPayload,
   Hadith,
+  HadithComment,
   HadithInput,
+  HadithInteractions,
   HadithUpdate,
   HealthCheckPayload,
   ListAdminsPayload,
@@ -54,6 +58,7 @@ import type {
   PostInput,
   PostInteractions,
   PostUpdate,
+  ReactToHadithPayload,
   ReactToPostPayload,
   ReactionInput,
   ReplyInput,
@@ -64,7 +69,9 @@ import type {
   StartSupportConversationPayload,
   SuccessPayload,
   UpsertContentInput,
-  UpsertContentPayload
+  UpsertContentPayload,
+  UserProfile,
+  UserProfileUpdate
 } from './api.schemas';
 
 import { customFetch } from '../custom-fetch';
@@ -3277,6 +3284,596 @@ export const useMarkConversationRead = <TError = ErrorType<unknown>,
         TContext
       > => {
       return useMutation(getMarkConversationReadMutationOptions(options));
+    }
+
+export const getGetHadithInteractionsUrl = (id: number,) => {
+
+
+
+
+  return `/api/hadiths/${id}/interactions`
+}
+
+/**
+ * @summary Get comments and reaction counts for a hadith
+ */
+export const getHadithInteractions = async (id: number, options?: RequestInit): Promise<HadithInteractions> => {
+
+  return customFetch<HadithInteractions>(getGetHadithInteractionsUrl(id),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetHadithInteractionsQueryKey = (id: number,) => {
+    return [
+    `/api/hadiths/${id}/interactions`
+    ] as const;
+    }
+
+
+export const getGetHadithInteractionsQueryOptions = <TData = Awaited<ReturnType<typeof getHadithInteractions>>, TError = ErrorType<unknown>>(id: number, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getHadithInteractions>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetHadithInteractionsQueryKey(id);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getHadithInteractions>>> = ({ signal }) => getHadithInteractions(id, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: id !== null && id !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getHadithInteractions>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type GetHadithInteractionsQueryResult = NonNullable<Awaited<ReturnType<typeof getHadithInteractions>>>
+export type GetHadithInteractionsQueryError = ErrorType<unknown>
+
+
+/**
+ * @summary Get comments and reaction counts for a hadith
+ */
+
+export function useGetHadithInteractions<TData = Awaited<ReturnType<typeof getHadithInteractions>>, TError = ErrorType<unknown>>(
+ id: number, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getHadithInteractions>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getGetHadithInteractionsQueryOptions(id,options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getCreateHadithCommentUrl = (id: number,) => {
+
+
+
+
+  return `/api/hadiths/${id}/comments`
+}
+
+/**
+ * @summary Add a comment to a hadith (signed-in users only)
+ */
+export const createHadithComment = async (id: number,
+    commentInput: CommentInput, options?: RequestInit): Promise<HadithComment> => {
+
+  return customFetch<HadithComment>(getCreateHadithCommentUrl(id),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(commentInput)
+  }
+);}
+
+
+
+
+
+export const getCreateHadithCommentMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createHadithComment>>, TError,{id: number;data: BodyType<CommentInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof createHadithComment>>, TError,{id: number;data: BodyType<CommentInput>}, TContext> => {
+
+const mutationKey = ['createHadithComment'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof createHadithComment>>, {id: number;data: BodyType<CommentInput>}> = (props) => {
+          const {id,data} = props ?? {};
+
+          return  createHadithComment(id,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type CreateHadithCommentMutationResult = NonNullable<Awaited<ReturnType<typeof createHadithComment>>>
+    export type CreateHadithCommentMutationBody = BodyType<CommentInput>
+    export type CreateHadithCommentMutationError = ErrorType<unknown>
+
+    /**
+ * @summary Add a comment to a hadith (signed-in users only)
+ */
+export const useCreateHadithComment = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createHadithComment>>, TError,{id: number;data: BodyType<CommentInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof createHadithComment>>,
+        TError,
+        {id: number;data: BodyType<CommentInput>},
+        TContext
+      > => {
+      return useMutation(getCreateHadithCommentMutationOptions(options));
+    }
+
+export const getDeleteHadithCommentUrl = (id: number,
+    commentId: number,) => {
+
+
+
+
+  return `/api/hadiths/${id}/comments/${commentId}`
+}
+
+/**
+ * @summary Delete a hadith comment (own comment or admin)
+ */
+export const deleteHadithComment = async (id: number,
+    commentId: number, options?: RequestInit): Promise<void> => {
+
+  return customFetch<void>(getDeleteHadithCommentUrl(id,commentId),
+  {
+    ...options,
+    method: 'DELETE'
+
+
+  }
+);}
+
+
+
+
+
+export const getDeleteHadithCommentMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteHadithComment>>, TError,{id: number;commentId: number}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof deleteHadithComment>>, TError,{id: number;commentId: number}, TContext> => {
+
+const mutationKey = ['deleteHadithComment'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteHadithComment>>, {id: number;commentId: number}> = (props) => {
+          const {id,commentId} = props ?? {};
+
+          return  deleteHadithComment(id,commentId,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type DeleteHadithCommentMutationResult = NonNullable<Awaited<ReturnType<typeof deleteHadithComment>>>
+
+    export type DeleteHadithCommentMutationError = ErrorType<unknown>
+
+    /**
+ * @summary Delete a hadith comment (own comment or admin)
+ */
+export const useDeleteHadithComment = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteHadithComment>>, TError,{id: number;commentId: number}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof deleteHadithComment>>,
+        TError,
+        {id: number;commentId: number},
+        TContext
+      > => {
+      return useMutation(getDeleteHadithCommentMutationOptions(options));
+    }
+
+export const getReactToHadithUrl = (id: number,) => {
+
+
+
+
+  return `/api/hadiths/${id}/react`
+}
+
+/**
+ * @summary Like or dislike a hadith (toggle, signed-in users only)
+ */
+export const reactToHadith = async (id: number,
+    reactionInput: ReactionInput, options?: RequestInit): Promise<ReactToHadithPayload> => {
+
+  return customFetch<ReactToHadithPayload>(getReactToHadithUrl(id),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(reactionInput)
+  }
+);}
+
+
+
+
+
+export const getReactToHadithMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof reactToHadith>>, TError,{id: number;data: BodyType<ReactionInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof reactToHadith>>, TError,{id: number;data: BodyType<ReactionInput>}, TContext> => {
+
+const mutationKey = ['reactToHadith'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof reactToHadith>>, {id: number;data: BodyType<ReactionInput>}> = (props) => {
+          const {id,data} = props ?? {};
+
+          return  reactToHadith(id,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type ReactToHadithMutationResult = NonNullable<Awaited<ReturnType<typeof reactToHadith>>>
+    export type ReactToHadithMutationBody = BodyType<ReactionInput>
+    export type ReactToHadithMutationError = ErrorType<unknown>
+
+    /**
+ * @summary Like or dislike a hadith (toggle, signed-in users only)
+ */
+export const useReactToHadith = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof reactToHadith>>, TError,{id: number;data: BodyType<ReactionInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof reactToHadith>>,
+        TError,
+        {id: number;data: BodyType<ReactionInput>},
+        TContext
+      > => {
+      return useMutation(getReactToHadithMutationOptions(options));
+    }
+
+export const getGetMyProfileUrl = () => {
+
+
+
+
+  return `/api/profile/me`
+}
+
+/**
+ * @summary Get current user's profile (creates default on first access)
+ */
+export const getMyProfile = async ( options?: RequestInit): Promise<UserProfile> => {
+
+  return customFetch<UserProfile>(getGetMyProfileUrl(),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetMyProfileQueryKey = () => {
+    return [
+    `/api/profile/me`
+    ] as const;
+    }
+
+
+export const getGetMyProfileQueryOptions = <TData = Awaited<ReturnType<typeof getMyProfile>>, TError = ErrorType<unknown>>( options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getMyProfile>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetMyProfileQueryKey();
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getMyProfile>>> = ({ signal }) => getMyProfile({ signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getMyProfile>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type GetMyProfileQueryResult = NonNullable<Awaited<ReturnType<typeof getMyProfile>>>
+export type GetMyProfileQueryError = ErrorType<unknown>
+
+
+/**
+ * @summary Get current user's profile (creates default on first access)
+ */
+
+export function useGetMyProfile<TData = Awaited<ReturnType<typeof getMyProfile>>, TError = ErrorType<unknown>>(
+  options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getMyProfile>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getGetMyProfileQueryOptions(options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getUpdateMyProfileUrl = () => {
+
+
+
+
+  return `/api/profile/me`
+}
+
+/**
+ * @summary Update current user's nickname and/or avatarUrl
+ */
+export const updateMyProfile = async (userProfileUpdate: UserProfileUpdate, options?: RequestInit): Promise<UserProfile> => {
+
+  return customFetch<UserProfile>(getUpdateMyProfileUrl(),
+  {
+    ...options,
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(userProfileUpdate)
+  }
+);}
+
+
+
+
+
+export const getUpdateMyProfileMutationOptions = <TError = ErrorType<ErrorPayload>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateMyProfile>>, TError,{data: BodyType<UserProfileUpdate>}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof updateMyProfile>>, TError,{data: BodyType<UserProfileUpdate>}, TContext> => {
+
+const mutationKey = ['updateMyProfile'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof updateMyProfile>>, {data: BodyType<UserProfileUpdate>}> = (props) => {
+          const {data} = props ?? {};
+
+          return  updateMyProfile(data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type UpdateMyProfileMutationResult = NonNullable<Awaited<ReturnType<typeof updateMyProfile>>>
+    export type UpdateMyProfileMutationBody = BodyType<UserProfileUpdate>
+    export type UpdateMyProfileMutationError = ErrorType<ErrorPayload>
+
+    /**
+ * @summary Update current user's nickname and/or avatarUrl
+ */
+export const useUpdateMyProfile = <TError = ErrorType<ErrorPayload>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateMyProfile>>, TError,{data: BodyType<UserProfileUpdate>}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof updateMyProfile>>,
+        TError,
+        {data: BodyType<UserProfileUpdate>},
+        TContext
+      > => {
+      return useMutation(getUpdateMyProfileMutationOptions(options));
+    }
+
+export const getGetUserProfileUrl = (clerkUserId: string,) => {
+
+
+
+
+  return `/api/profile/${clerkUserId}`
+}
+
+/**
+ * @summary Get another user's public profile
+ */
+export const getUserProfile = async (clerkUserId: string, options?: RequestInit): Promise<UserProfile> => {
+
+  return customFetch<UserProfile>(getGetUserProfileUrl(clerkUserId),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetUserProfileQueryKey = (clerkUserId: string,) => {
+    return [
+    `/api/profile/${clerkUserId}`
+    ] as const;
+    }
+
+
+export const getGetUserProfileQueryOptions = <TData = Awaited<ReturnType<typeof getUserProfile>>, TError = ErrorType<ErrorPayload>>(clerkUserId: string, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getUserProfile>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetUserProfileQueryKey(clerkUserId);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getUserProfile>>> = ({ signal }) => getUserProfile(clerkUserId, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: clerkUserId !== null && clerkUserId !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getUserProfile>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type GetUserProfileQueryResult = NonNullable<Awaited<ReturnType<typeof getUserProfile>>>
+export type GetUserProfileQueryError = ErrorType<ErrorPayload>
+
+
+/**
+ * @summary Get another user's public profile
+ */
+
+export function useGetUserProfile<TData = Awaited<ReturnType<typeof getUserProfile>>, TError = ErrorType<ErrorPayload>>(
+ clerkUserId: string, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getUserProfile>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getGetUserProfileQueryOptions(clerkUserId,options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getUpdateMyAdminAvatarUrl = () => {
+
+
+
+
+  return `/api/admins/me/avatar`
+}
+
+/**
+ * @summary Update current admin's own avatarUrl
+ */
+export const updateMyAdminAvatar = async (adminAvatarUpdate: AdminAvatarUpdate, options?: RequestInit): Promise<AdminWithAvatar> => {
+
+  return customFetch<AdminWithAvatar>(getUpdateMyAdminAvatarUrl(),
+  {
+    ...options,
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(adminAvatarUpdate)
+  }
+);}
+
+
+
+
+
+export const getUpdateMyAdminAvatarMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateMyAdminAvatar>>, TError,{data: BodyType<AdminAvatarUpdate>}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof updateMyAdminAvatar>>, TError,{data: BodyType<AdminAvatarUpdate>}, TContext> => {
+
+const mutationKey = ['updateMyAdminAvatar'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof updateMyAdminAvatar>>, {data: BodyType<AdminAvatarUpdate>}> = (props) => {
+          const {data} = props ?? {};
+
+          return  updateMyAdminAvatar(data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type UpdateMyAdminAvatarMutationResult = NonNullable<Awaited<ReturnType<typeof updateMyAdminAvatar>>>
+    export type UpdateMyAdminAvatarMutationBody = BodyType<AdminAvatarUpdate>
+    export type UpdateMyAdminAvatarMutationError = ErrorType<unknown>
+
+    /**
+ * @summary Update current admin's own avatarUrl
+ */
+export const useUpdateMyAdminAvatar = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateMyAdminAvatar>>, TError,{data: BodyType<AdminAvatarUpdate>}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof updateMyAdminAvatar>>,
+        TError,
+        {data: BodyType<AdminAvatarUpdate>},
+        TContext
+      > => {
+      return useMutation(getUpdateMyAdminAvatarMutationOptions(options));
     }
 
 export const getRequestUploadUrlUrl = () => {

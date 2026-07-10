@@ -30,6 +30,8 @@ export interface Admin {
   clerkUserId: string;
   email: string;
   name: string;
+  /** @nullable */
+  avatarUrl?: string | null;
   role: AdminRole;
   createdAt: string;
 }
@@ -50,6 +52,8 @@ export type GetMePayload = {
   clerkUserId?: string;
   email?: string;
   name?: string;
+  /** @nullable */
+  avatarUrl?: string | null;
   role?: GetMePayloadRole;
   createdAt?: string;
 } | null;
@@ -274,6 +278,30 @@ export interface ReactToPostPayload {
   myReaction: ReactToPostPayloadMyReaction;
 }
 
+export type AdminWithAvatarRole = typeof AdminWithAvatarRole[keyof typeof AdminWithAvatarRole];
+
+
+export const AdminWithAvatarRole = {
+  owner: 'owner',
+  editor: 'editor',
+} as const;
+
+export interface AdminWithAvatar {
+  id: number;
+  clerkUserId: string;
+  email: string;
+  name: string;
+  role: AdminWithAvatarRole;
+  /** @nullable */
+  avatarUrl?: string | null;
+  createdAt: string;
+}
+
+export interface AdminAvatarUpdate {
+  /** @nullable */
+  avatarUrl?: string | null;
+}
+
 export type HadithGrade = typeof HadithGrade[keyof typeof HadithGrade];
 
 
@@ -328,6 +356,71 @@ export type GetHadithPayload = Hadith;
 export type CreateHadithPayload = Hadith;
 
 export type UpdateHadithPayload = Hadith;
+
+export interface HadithComment {
+  id: number;
+  hadithId: number;
+  /** @nullable */
+  authorClerkId?: string | null;
+  authorName: string;
+  /** @nullable */
+  authorAvatarUrl?: string | null;
+  isAdmin: boolean;
+  content: string;
+  createdAt: string;
+}
+
+/**
+ * @nullable
+ */
+export type HadithInteractionsMyReaction = typeof HadithInteractionsMyReaction[keyof typeof HadithInteractionsMyReaction] | null;
+
+
+export const HadithInteractionsMyReaction = {
+  like: 'like',
+  dislike: 'dislike',
+} as const;
+
+export interface HadithInteractions {
+  comments: HadithComment[];
+  likes: number;
+  dislikes: number;
+  /** @nullable */
+  myReaction: HadithInteractionsMyReaction;
+}
+
+/**
+ * @nullable
+ */
+export type ReactToHadithPayloadMyReaction = typeof ReactToHadithPayloadMyReaction[keyof typeof ReactToHadithPayloadMyReaction] | null;
+
+
+export const ReactToHadithPayloadMyReaction = {
+  like: 'like',
+  dislike: 'dislike',
+} as const;
+
+export interface ReactToHadithPayload {
+  /** @nullable */
+  myReaction: ReactToHadithPayloadMyReaction;
+}
+
+export interface UserProfile {
+  id: number;
+  clerkUserId: string;
+  nickname: string;
+  /** @nullable */
+  avatarUrl?: string | null;
+  nicknameUpdatedAt: string;
+  createdAt: string;
+}
+
+export interface UserProfileUpdate {
+  /** @minLength 1 */
+  nickname?: string;
+  /** @nullable */
+  avatarUrl?: string | null;
+}
 
 export interface Message {
   id: number;

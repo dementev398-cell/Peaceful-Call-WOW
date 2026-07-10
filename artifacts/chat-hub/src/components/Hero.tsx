@@ -238,22 +238,6 @@ export function Hero() {
           </motion.div>
         </motion.div>
       </div>
-
-      {/* Scroll Indicator */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1.8, duration: 1 }}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 z-10"
-      >
-        <div className="w-[2px] h-20 bg-gradient-to-b from-primary/50 to-transparent overflow-hidden rounded-full">
-          <motion.div 
-            className="w-full h-1/2 bg-primary shadow-[0_0_10px_rgba(var(--primary),1)]"
-            animate={{ y: ["-100%", "200%"] }}
-            transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-          />
-        </div>
-      </motion.div>
     </section>
   );
 }

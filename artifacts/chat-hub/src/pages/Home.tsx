@@ -12,9 +12,29 @@ import { Redirect } from 'wouter';
 import { useUser } from '@clerk/react';
 import { Loader2 } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useEffect } from 'react';
 
 export default function Home() {
   const { isLoaded, isSignedIn } = useUser();
+
+  const hasAnchor = typeof window !== 'undefined' && !!window.location.hash;
+
+  // Support navbar anchor links (/#about, /#faq) coming from other pages:
+  // scroll to the section once this page (and its sections) have mounted.
+  // This must work regardless of sign-in state, since signed-in users are
+  // otherwise redirected away from this landing page.
+  useEffect(() => {
+    if (!isLoaded) return;
+    const hash = window.location.hash;
+    if (!hash) return;
+    const id = hash.slice(1);
+    const scrollToTarget = () => {
+      const el = document.getElementById(id);
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    };
+    const timeout = setTimeout(scrollToTarget, 100);
+    return () => clearTimeout(timeout);
+  }, [isLoaded]);
 
   if (!isLoaded) {
     return (
@@ -27,7 +47,10 @@ export default function Home() {
     );
   }
 
-  if (isSignedIn) {
+  // Signed-in users normally land on /portal instead of the marketing home
+  // page, but if they followed an /#about or /#faq navbar link we still want
+  // to show them the section they asked for rather than bouncing them away.
+  if (isSignedIn && !hasAnchor) {
     return <Redirect to="/portal" />;
   }
 

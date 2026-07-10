@@ -25,6 +25,7 @@ export const GetMeResponse = zod.object({
   "clerkUserId": zod.string().optional(),
   "email": zod.string().optional(),
   "name": zod.string().optional(),
+  "avatarUrl": zod.string().nullish(),
   "role": zod.enum(['owner', 'editor']).optional(),
   "createdAt": zod.string().optional()
 }).nullable()
@@ -474,6 +475,7 @@ export const ListAdminsResponseItem = zod.object({
   "clerkUserId": zod.string(),
   "email": zod.string(),
   "name": zod.string(),
+  "avatarUrl": zod.string().nullish(),
   "role": zod.enum(['owner', 'editor']),
   "createdAt": zod.string()
 })
@@ -493,6 +495,7 @@ export const CreateAdminResponse = zod.object({
   "clerkUserId": zod.string(),
   "email": zod.string(),
   "name": zod.string(),
+  "avatarUrl": zod.string().nullish(),
   "role": zod.enum(['owner', 'editor']),
   "createdAt": zod.string()
 })
@@ -515,6 +518,7 @@ export const UpdateAdminRoleResponse = zod.object({
   "clerkUserId": zod.string(),
   "email": zod.string(),
   "name": zod.string(),
+  "avatarUrl": zod.string().nullish(),
   "role": zod.enum(['owner', 'editor']),
   "createdAt": zod.string()
 })
@@ -855,6 +859,152 @@ export const MarkConversationReadParams = zod.object({
 })
 
 export const MarkConversationReadResponse = zod.void()
+
+
+/**
+ * @summary Get comments and reaction counts for a hadith
+ */
+export const GetHadithInteractionsParams = zod.object({
+  "id": zod.coerce.number()
+})
+
+export const GetHadithInteractionsResponse = zod.object({
+  "comments": zod.array(zod.object({
+  "id": zod.number(),
+  "hadithId": zod.number(),
+  "authorClerkId": zod.string().nullish(),
+  "authorName": zod.string(),
+  "authorAvatarUrl": zod.string().nullish(),
+  "isAdmin": zod.boolean(),
+  "content": zod.string(),
+  "createdAt": zod.string()
+})),
+  "likes": zod.number(),
+  "dislikes": zod.number(),
+  "myReaction": zod.union([zod.literal('like'),zod.literal('dislike'),zod.literal(null)]).nullable()
+})
+
+
+/**
+ * @summary Add a comment to a hadith (signed-in users only)
+ */
+export const CreateHadithCommentParams = zod.object({
+  "id": zod.coerce.number()
+})
+
+
+
+
+export const CreateHadithCommentBody = zod.object({
+  "content": zod.string().min(1)
+})
+
+export const CreateHadithCommentResponse = zod.object({
+  "id": zod.number(),
+  "hadithId": zod.number(),
+  "authorClerkId": zod.string().nullish(),
+  "authorName": zod.string(),
+  "authorAvatarUrl": zod.string().nullish(),
+  "isAdmin": zod.boolean(),
+  "content": zod.string(),
+  "createdAt": zod.string()
+})
+
+
+/**
+ * @summary Delete a hadith comment (own comment or admin)
+ */
+export const DeleteHadithCommentParams = zod.object({
+  "id": zod.coerce.number(),
+  "commentId": zod.coerce.number()
+})
+
+export const DeleteHadithCommentResponse = zod.void()
+
+
+/**
+ * @summary Like or dislike a hadith (toggle, signed-in users only)
+ */
+export const ReactToHadithParams = zod.object({
+  "id": zod.coerce.number()
+})
+
+export const ReactToHadithBody = zod.object({
+  "type": zod.enum(['like', 'dislike'])
+})
+
+export const ReactToHadithResponse = zod.object({
+  "myReaction": zod.union([zod.literal('like'),zod.literal('dislike'),zod.literal(null)]).nullable()
+})
+
+
+/**
+ * @summary Get current user's profile (creates default on first access)
+ */
+export const GetMyProfileResponse = zod.object({
+  "id": zod.number(),
+  "clerkUserId": zod.string(),
+  "nickname": zod.string(),
+  "avatarUrl": zod.string().nullish(),
+  "nicknameUpdatedAt": zod.string(),
+  "createdAt": zod.string()
+})
+
+
+/**
+ * @summary Update current user's nickname and/or avatarUrl
+ */
+
+
+
+export const UpdateMyProfileBody = zod.object({
+  "nickname": zod.string().min(1).optional(),
+  "avatarUrl": zod.string().nullish()
+})
+
+export const UpdateMyProfileResponse = zod.object({
+  "id": zod.number(),
+  "clerkUserId": zod.string(),
+  "nickname": zod.string(),
+  "avatarUrl": zod.string().nullish(),
+  "nicknameUpdatedAt": zod.string(),
+  "createdAt": zod.string()
+})
+
+
+/**
+ * @summary Get another user's public profile
+ */
+export const GetUserProfileParams = zod.object({
+  "clerkUserId": zod.coerce.string()
+})
+
+export const GetUserProfileResponse = zod.object({
+  "id": zod.number(),
+  "clerkUserId": zod.string(),
+  "nickname": zod.string(),
+  "avatarUrl": zod.string().nullish(),
+  "nicknameUpdatedAt": zod.string(),
+  "createdAt": zod.string()
+})
+
+
+/**
+ * @summary Update current admin's own avatarUrl
+ */
+export const UpdateMyAdminAvatarBody = zod.object({
+  "avatarUrl": zod.string().nullish()
+})
+
+export const UpdateMyAdminAvatarResponse = zod.object({
+  "id": zod.number(),
+  "clerkUserId": zod.string(),
+  "email": zod.string(),
+  "name": zod.string(),
+  "role": zod.enum(['owner', 'editor']),
+  "avatarUrl": zod.string().nullish(),
+  "createdAt": zod.string()
+})
 
 
 /**

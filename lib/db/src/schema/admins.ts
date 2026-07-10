@@ -6,6 +6,7 @@ export const adminsTable = pgTable("admins", {
   email: text("email").notNull(),
   name: text("name").notNull().default(""),
   role: text("role", { enum: ["owner", "editor"] }).notNull().default("editor"),
+  avatarUrl: text("avatar_url"),
   createdAt: timestamp("created_at", { mode: "string" }).notNull().defaultNow(),
 });
 

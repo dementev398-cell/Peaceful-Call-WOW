@@ -63,6 +63,20 @@ router.post("/admins", requireOwner, async (req, res): Promise<void> => {
   res.status(201).json(CreateAdminResponse.parse(admin));
 });
 
+// PATCH /admins/me/avatar — admin updates their own avatarUrl
+router.patch("/admins/me/avatar", requireAdmin, async (req, res): Promise<void> => {
+  const admin = req.admin!;
+  const { avatarUrl } = req.body as { avatarUrl?: string | null };
+
+  const [updated] = await db
+    .update(adminsTable)
+    .set({ avatarUrl: avatarUrl ?? null })
+    .where(eq(adminsTable.id, admin.id))
+    .returning();
+
+  res.json(updated);
+});
+
 // PATCH /admins/:id/role
 router.patch("/admins/:id/role", requireOwner, async (req, res): Promise<void> => {
   const rawId = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;

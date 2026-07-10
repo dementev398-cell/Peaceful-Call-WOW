@@ -5,3 +5,5 @@ export * from "./messages";
 export * from "./chat";
 export * from "./post-interactions";
 export * from "./hadiths";
+export * from "./hadith-interactions";
+export * from "./user-profiles";

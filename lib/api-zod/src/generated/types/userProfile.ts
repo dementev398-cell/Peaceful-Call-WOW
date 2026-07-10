@@ -5,15 +5,13 @@
  * Стильный призыв API
  * OpenAPI spec version: 0.1.0
  */
-import type { AdminRole } from './adminRole';
 
-export interface Admin {
+export interface UserProfile {
   id: number;
   clerkUserId: string;
-  email: string;
-  name: string;
+  nickname: string;
   /** @nullable */
   avatarUrl?: string | null;
-  role: AdminRole;
+  nicknameUpdatedAt: string;
   createdAt: string;
 }
