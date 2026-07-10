@@ -1,0 +1,1 @@
+- [Orval zod response/body const naming](orval-zod-naming.md) — response/body zod consts are named `<operationId>Response`/`<operationId>Body`, not the `$ref` schema name; don't assume schema renames propagate to route imports.

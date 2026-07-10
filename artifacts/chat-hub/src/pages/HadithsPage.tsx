@@ -1,0 +1,119 @@
+import { Navbar } from '@/components/Navbar';
+import { Footer } from '@/components/Footer';
+import { ScrollReveal } from '@/components/ScrollReveal';
+import { useListHadiths, type HadithGrade } from '@workspace/api-client-react';
+import { Link } from 'wouter';
+import { useLanguage } from '@/contexts/LanguageContext';
+import { Loader2, ScrollText, ArrowRight } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { useState } from 'react';
+import { GRADE_META } from '@/lib/hadithGrades';
+
+export default function HadithsPage() {
+  const { t, isRtl, language } = useLanguage();
+  const [grade, setGrade] = useState<string>('');
+  const { data: hadiths = [], isLoading } = useListHadiths(
+    grade ? { grade: grade as HadithGrade } : undefined
+  );
+
+  return (
+    <div className="min-h-screen flex flex-col bg-background gradient-bg" dir={isRtl ? 'rtl' : 'ltr'}>
+      <Navbar />
+      <main className="flex-grow pt-28 pb-24">
+        <div className="container mx-auto px-4 sm:px-6 max-w-4xl">
+          <ScrollReveal>
+            <div className="text-center mb-12">
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 text-primary text-sm font-semibold tracking-wider uppercase mb-6">
+                <ScrollText className="w-4 h-4" />
+                {t('hadiths.title')}
+              </div>
+              <h1 className="text-4xl md:text-6xl font-serif font-bold text-foreground mb-6 leading-tight">
+                {t('hadiths.title')}
+              </h1>
+              <div className="w-20 h-1 bg-gradient-to-r from-primary/0 via-primary to-primary/0 mx-auto mb-6 rounded-full" />
+              <p className="text-xl text-muted-foreground max-w-2xl mx-auto font-serif">
+                {t('hadiths.subtitle')}
+              </p>
+            </div>
+          </ScrollReveal>
+
+          <ScrollReveal delay="100">
+            <div className="flex flex-wrap items-center justify-center gap-2 mb-12">
+              <button
+                onClick={() => setGrade('')}
+                className={`px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wide border transition-all ${
+                  grade === '' ? 'bg-primary text-primary-foreground border-primary' : 'bg-muted/40 text-muted-foreground border-border/40 hover:text-foreground'
+                }`}
+              >
+                {t('hadiths.all')}
+              </button>
+              {Object.entries(GRADE_META).map(([key, meta]) => (
+                <button
+                  key={key}
+                  onClick={() => setGrade(key)}
+                  className={`px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wide border transition-all ${
+                    grade === key ? meta.className.replace('/10', '/20') + ' !border-current' : 'bg-muted/40 text-muted-foreground border-border/40 hover:text-foreground'
+                  }`}
+                >
+                  {meta.label[language] || meta.label.EN}
+                </button>
+              ))}
+            </div>
+          </ScrollReveal>
+
+          {isLoading ? (
+            <div className="flex justify-center py-24">
+              <Loader2 className="w-8 h-8 animate-spin text-primary" />
+            </div>
+          ) : hadiths.length === 0 ? (
+            <ScrollReveal>
+              <div className="text-center py-24 glass rounded-3xl border border-border/50">
+                <ScrollText className="w-16 h-16 mx-auto mb-4 text-muted-foreground/30" />
+                <p className="text-muted-foreground font-serif text-xl">{t('hadiths.none')}</p>
+              </div>
+            </ScrollReveal>
+          ) : (
+            <div className="space-y-5">
+              {hadiths.map((hadith, idx) => {
+                const meta = GRADE_META[hadith.grade] || GRADE_META.sahih;
+                return (
+                  <ScrollReveal key={hadith.id} delay={String((idx % 4) * 100)}>
+                    <Link href={`/hadiths/${hadith.id}`} className="block group">
+                      <motion.div
+                        whileHover={{ y: -3 }}
+                        transition={{ duration: 0.2 }}
+                        className="glass rounded-3xl border border-border/50 p-7 hover:border-primary/40 transition-all duration-300 hover:shadow-xl hover:shadow-primary/5"
+                      >
+                        <div className="flex items-center gap-3 mb-4 flex-wrap">
+                          <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide border ${meta.className}`}>
+                            {meta.label[language] || meta.label.EN}
+                          </span>
+                          {hadith.topic && (
+                            <span className="text-xs text-muted-foreground">{hadith.topic}</span>
+                          )}
+                        </div>
+                        <p className="font-serif text-lg text-foreground leading-relaxed mb-4 line-clamp-4">
+                          {hadith.text}
+                        </p>
+                        <div className="flex items-center justify-between pt-4 border-t border-border/30">
+                          {hadith.source && (
+                            <span className="text-sm text-muted-foreground">{hadith.source}</span>
+                          )}
+                          <span className="flex items-center gap-1 text-sm font-semibold text-primary uppercase tracking-wide ml-auto">
+                            {t('posts.readMore')}
+                            <ArrowRight className="w-4 h-4 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300" />
+                          </span>
+                        </div>
+                      </motion.div>
+                    </Link>
+                  </ScrollReveal>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      </main>
+      <Footer />
+    </div>
+  );
+}
