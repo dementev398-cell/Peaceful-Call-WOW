@@ -11,7 +11,7 @@ export function Donate() {
   const walletNote = dict['donation.wallet_note'] || 'USDT (TRC20)';
 
   return (
-    <section id="donate" className="py-24 md:py-32 relative overflow-hidden" dir={isRtl ? 'rtl' : 'ltr'}>
+    <section id="donate" className="py-24 md:py-32 relative overflow-hidden" dir="ltr">
       <div className="absolute inset-0 bg-primary/5 pointer-events-none" />
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-[radial-gradient(circle,hsl(var(--primary)/0.1),transparent_60%)] blur-3xl pointer-events-none" />
 
@@ -21,7 +21,7 @@ export function Donate() {
           <div className="absolute bottom-0 right-0 w-32 h-32 bg-gradient-to-tl from-primary/20 to-transparent opacity-80 rounded-br-[3rem]" />
 
           <ScrollReveal>
-            <div className="text-center mb-12 relative z-10">
+            <div className="text-center mb-12 relative z-10" dir={isRtl ? 'rtl' : 'ltr'}>
               <div className="inline-flex items-center justify-center w-16 h-16 rounded-[1.5rem] bg-background/50 border border-primary/30 mb-6 shadow-inner glass">
                 <Heart className="w-8 h-8 text-primary fill-primary/40 drop-shadow-sm" />
               </div>

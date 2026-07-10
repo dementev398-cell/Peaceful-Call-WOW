@@ -16,7 +16,7 @@ export function About() {
   ];
 
   return (
-    <section id="about" className="py-24 md:py-32 bg-background relative overflow-hidden" dir={isRtl ? 'rtl' : 'ltr'}>
+    <section id="about" className="py-24 md:py-32 bg-background relative overflow-hidden" dir="ltr">
       {/* Dynamic background glow */}
       <div className="absolute top-1/2 left-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[100px] -translate-y-1/2 -translate-x-1/2 pointer-events-none" />
       
@@ -41,33 +41,35 @@ export function About() {
           </ScrollReveal>
 
           <ScrollReveal delay="100">
-            <h2 className="text-4xl md:text-5xl lg:text-6xl font-serif font-bold text-foreground mb-8 tracking-tight drop-shadow-sm">
-              {t('about.title')}
-            </h2>
-            <div className="w-20 h-1 bg-gradient-to-r from-primary to-transparent mb-10 rounded-full"></div>
-            
-            <p className="text-lg sm:text-xl text-foreground/80 leading-relaxed mb-12 font-serif font-light drop-shadow-sm">
-              {t('about.desc')}
-            </p>
-
-            <ul className="space-y-6 mb-14">
-              {bullets.map((bullet, idx) => (
-                <li key={idx} className="flex items-start gap-4 group/item">
-                  <div className="mt-1 w-8 h-8 rounded-full glass border border-primary/20 flex items-center justify-center flex-shrink-0 shadow-sm group-hover/item:border-primary/50 group-hover/item:shadow-[0_0_15px_rgba(240,160,32,0.2)] transition-all duration-300">
-                    <div className="w-2 h-2 bg-primary rounded-full group-hover/item:scale-125 transition-transform duration-300"></div>
-                  </div>
-                  <span className="text-base sm:text-lg text-muted-foreground group-hover/item:text-foreground transition-colors duration-300 leading-relaxed pt-0.5">{bullet}</span>
-                </li>
-              ))}
-            </ul>
-
-            <div className="p-6 sm:p-8 glass-strong border-l-4 border-l-primary rounded-r-3xl shadow-lg relative overflow-hidden">
-              <div className="absolute top-0 right-0 p-4 opacity-5">
-                <div className="w-24 h-24 border-4 border-primary rounded-full blur-[2px]"></div>
-              </div>
-              <p className="text-xl sm:text-2xl font-serif italic text-foreground leading-snug relative z-10">
-                {t('about.closing')}
+            <div dir={isRtl ? 'rtl' : 'ltr'}>
+              <h2 className="text-4xl md:text-5xl lg:text-6xl font-serif font-bold text-foreground mb-8 tracking-tight drop-shadow-sm">
+                {t('about.title')}
+              </h2>
+              <div className={`w-20 h-1 bg-gradient-to-r from-primary to-transparent mb-10 rounded-full ${isRtl ? 'ml-auto' : ''}`}></div>
+              
+              <p className="text-lg sm:text-xl text-foreground/80 leading-relaxed mb-12 font-serif font-light drop-shadow-sm">
+                {t('about.desc')}
               </p>
+
+              <ul className="space-y-6 mb-14">
+                {bullets.map((bullet, idx) => (
+                  <li key={idx} className="flex items-start gap-4 group/item">
+                    <div className="mt-1 w-8 h-8 rounded-full glass border border-primary/20 flex items-center justify-center flex-shrink-0 shadow-sm group-hover/item:border-primary/50 group-hover/item:shadow-[0_0_15px_rgba(240,160,32,0.2)] transition-all duration-300">
+                      <div className="w-2 h-2 bg-primary rounded-full group-hover/item:scale-125 transition-transform duration-300"></div>
+                    </div>
+                    <span className="text-base sm:text-lg text-muted-foreground group-hover/item:text-foreground transition-colors duration-300 leading-relaxed pt-0.5">{bullet}</span>
+                  </li>
+                ))}
+              </ul>
+
+              <div className={`p-6 sm:p-8 glass-strong shadow-lg relative overflow-hidden ${isRtl ? 'border-r-4 border-r-primary rounded-l-3xl' : 'border-l-4 border-l-primary rounded-r-3xl'}`}>
+                <div className={`absolute top-0 p-4 opacity-5 ${isRtl ? 'left-0' : 'right-0'}`}>
+                  <div className="w-24 h-24 border-4 border-primary rounded-full blur-[2px]"></div>
+                </div>
+                <p className="text-xl sm:text-2xl font-serif italic text-foreground leading-snug relative z-10">
+                  {t('about.closing')}
+                </p>
+              </div>
             </div>
           </ScrollReveal>
         </div>

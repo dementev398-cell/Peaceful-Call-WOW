@@ -88,7 +88,7 @@ function AuthShell({ children }: { children: ReactNode }) {
   const { t, isRtl } = useLanguage();
   return (
     <div
-      dir={isRtl ? 'rtl' : 'ltr'}
+      dir="ltr"
       className="relative flex min-h-[100dvh] flex-col items-center justify-center overflow-hidden gradient-bg px-4 py-12"
     >
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_right,hsl(var(--primary)/0.12),transparent_55%)]" />

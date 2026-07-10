@@ -157,7 +157,7 @@ export default function AdminPage() {
       </header>
 
       <main className="flex-grow container mx-auto px-4 sm:px-6 py-6 sm:py-8 max-w-6xl mt-14 sm:mt-16">
-        <Tabs defaultValue={tabs[0]} className="w-full">
+        <Tabs defaultValue={tabs[0]} className="w-full" dir="ltr">
           <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0 mb-7 pb-2">
             <TabsList className="inline-flex bg-card/60 glass-panel border border-border/40 p-1.5 rounded-2xl gap-1 min-w-max">
               {isOwner && (

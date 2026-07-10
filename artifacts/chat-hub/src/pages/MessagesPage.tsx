@@ -21,8 +21,10 @@ import { ScrollReveal } from "@/components/ScrollReveal";
 import { useRequestUploadUrl } from "@workspace/api-client-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { useSearch } from "wouter";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function MessagesPage() {
+  const { t } = useLanguage();
   const { user } = useUser();
   const search = useSearch();
   const [activeConvId, setActiveConvId] = useState<number | null>(null);
@@ -53,10 +55,10 @@ export default function MessagesPage() {
       <Navbar />
       <main className="flex-grow container mx-auto px-4 py-24 sm:py-28 max-w-7xl">
         <ScrollReveal>
-          <div className="mb-8 flex justify-between items-end">
+          <div className="mb-8 flex flex-col md:flex-row justify-between items-start md:items-end gap-4" dir="ltr">
             <div>
-              <h1 className="text-3xl md:text-4xl font-serif font-bold text-foreground mb-2">Сообщения</h1>
-              <p className="text-muted-foreground text-sm font-serif">Ваши беседы с администрацией и участниками</p>
+              <h1 className="text-3xl md:text-4xl font-serif font-bold text-foreground mb-2">{t('messages.title')}</h1>
+              <p className="text-muted-foreground text-sm font-serif">{t('messages.subtitle')}</p>
             </div>
             <NewConversationDialog onSelect={handleSelectConv} />
           </div>

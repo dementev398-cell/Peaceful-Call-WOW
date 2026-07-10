@@ -4,6 +4,7 @@ import { PageTransition } from '@/components/PageTransition';
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
 import { ScrollReveal } from '@/components/ScrollReveal';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useListPosts } from '@workspace/api-client-react';
 import { Link } from 'wouter';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -54,12 +55,12 @@ export default function PostsPage() {
   }, [allPosts, query, yearFilter, sortMode, localeTag]);
 
   return (
-    <PageTransition className="min-h-screen flex flex-col bg-background gradient-bg" dir={isRtl ? 'rtl' : 'ltr'}>
+    <PageTransition className="min-h-screen flex flex-col bg-background gradient-bg" dir="ltr">
       <Navbar />
       <main className="flex-grow pt-28 pb-24">
         <div className="container mx-auto px-4 sm:px-6 max-w-5xl">
           <ScrollReveal>
-            <div className="text-center mb-16">
+            <div className="text-center mb-16" dir={isRtl ? 'rtl' : 'ltr'}>
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 text-primary text-sm font-semibold tracking-wider uppercase mb-6">
                 <BookOpen className="w-4 h-4" />
                 {t('posts.title')}
@@ -87,26 +88,28 @@ export default function PostsPage() {
               </div>
               <div className="hidden sm:block w-px h-6 bg-border/50 self-center" />
               <div className="flex gap-2">
-                <select
-                  value={yearFilter}
-                  onChange={(e) => setYearFilter(e.target.value)}
-                  className="flex-1 sm:w-auto h-12 px-4 rounded-full bg-muted/20 border border-transparent text-sm text-foreground focus:outline-none focus:bg-muted/40 transition-colors"
-                >
-                  <option value="all">{t('filter.allYears')}</option>
-                  {years.includes(currentYear) && <option value={currentYear}>{t('filter.thisYear')}</option>}
-                  {years.filter((y) => y !== currentYear).map((y) => (
-                    <option key={y} value={y}>{y}</option>
-                  ))}
-                </select>
-                <select
-                  value={sortMode}
-                  onChange={(e) => setSortMode(e.target.value as SortMode)}
-                  className="flex-1 sm:w-auto h-12 px-4 rounded-full bg-muted/20 border border-transparent text-sm text-foreground focus:outline-none focus:bg-muted/40 transition-colors"
-                >
-                  <option value="newest">{t('sort.newest')}</option>
-                  <option value="oldest">{t('sort.oldest')}</option>
-                  <option value="alpha">{t('sort.alpha')}</option>
-                </select>
+                <Select value={yearFilter} onValueChange={setYearFilter}>
+                  <SelectTrigger className="flex-1 sm:w-auto h-12 px-4 rounded-full bg-muted/20 border border-transparent text-sm text-foreground focus:ring-0 focus:ring-offset-0 focus:bg-muted/40 transition-colors">
+                    <SelectValue placeholder={t('filter.allYears')} />
+                  </SelectTrigger>
+                  <SelectContent className="rounded-2xl border-border/40 bg-card/95 backdrop-blur-xl shadow-xl">
+                    <SelectItem value="all" className="rounded-xl focus:bg-primary/20 focus:text-primary">{t('filter.allYears')}</SelectItem>
+                    {years.includes(currentYear) && <SelectItem value={currentYear} className="rounded-xl focus:bg-primary/20 focus:text-primary">{t('filter.thisYear')}</SelectItem>}
+                    {years.filter((y) => y !== currentYear).map((y) => (
+                      <SelectItem key={y} value={y} className="rounded-xl focus:bg-primary/20 focus:text-primary">{y}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <Select value={sortMode} onValueChange={(val) => setSortMode(val as SortMode)}>
+                  <SelectTrigger className="flex-1 sm:w-auto h-12 px-4 rounded-full bg-muted/20 border border-transparent text-sm text-foreground focus:ring-0 focus:ring-offset-0 focus:bg-muted/40 transition-colors">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent className="rounded-2xl border-border/40 bg-card/95 backdrop-blur-xl shadow-xl">
+                    <SelectItem value="newest" className="rounded-xl focus:bg-primary/20 focus:text-primary">{t('sort.newest')}</SelectItem>
+                    <SelectItem value="oldest" className="rounded-xl focus:bg-primary/20 focus:text-primary">{t('sort.oldest')}</SelectItem>
+                    <SelectItem value="alpha" className="rounded-xl focus:bg-primary/20 focus:text-primary">{t('sort.alpha')}</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
             </div>
           </ScrollReveal>
@@ -149,7 +152,7 @@ export default function PostsPage() {
                         </div>
                       )}
 
-                      <div className="p-7 flex-1 flex flex-col">
+                      <div className="p-7 flex-1 flex flex-col" dir={isRtl ? 'rtl' : 'ltr'}>
                         <div className="flex items-center gap-3 mb-4">
                           <span className="px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-bold tracking-widest uppercase border border-primary/20">
                             {t('posts.title').slice(0, -1) || 'Статья'}
@@ -182,9 +185,9 @@ export default function PostsPage() {
                               <span>{post.authorName}</span>
                             </div>
                           )}
-                          <span className="flex items-center gap-1 text-sm font-semibold text-primary uppercase tracking-wide ml-auto">
+                          <span className={`flex items-center gap-1 text-sm font-semibold text-primary uppercase tracking-wide ${isRtl ? 'mr-auto' : 'ml-auto'}`}>
                             {t('posts.readMore')}
-                            <ArrowRight className="w-4 h-4 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300" />
+                            <ArrowRight className={`w-4 h-4 opacity-0 transition-all duration-300 ${isRtl ? 'translate-x-2 group-hover:-translate-x-0 rotate-180' : '-translate-x-2 group-hover:translate-x-0'}`} />
                           </span>
                         </div>
                       </div>

@@ -35,17 +35,17 @@ export default function SingleHadithPage() {
   const meta = GRADE_META[hadith.grade] || GRADE_META.sahih;
 
   return (
-    <PageTransition className="min-h-screen flex flex-col bg-background gradient-bg" dir={isRtl ? 'rtl' : 'ltr'}>
+    <PageTransition className="min-h-screen flex flex-col bg-background gradient-bg" dir="ltr">
       <Navbar />
       <main className="flex-grow pt-24 pb-32">
         <article className="container mx-auto px-4 sm:px-6 max-w-3xl">
           <ScrollReveal>
-            <Link href="/hadiths" className="inline-flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-primary transition-colors mb-10 group">
-              <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
+            <Link href="/hadiths" className="inline-flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-primary transition-colors mb-10 group" dir={isRtl ? 'rtl' : 'ltr'}>
+              <ArrowLeft className={`w-4 h-4 transition-transform ${isRtl ? 'group-hover:translate-x-1 rotate-180' : 'group-hover:-translate-x-1'}`} />
               {t('posts.back')}
             </Link>
 
-            <div className="flex items-center gap-3 mb-8 flex-wrap">
+            <div className="flex items-center gap-3 mb-8 flex-wrap" dir={isRtl ? 'rtl' : 'ltr'}>
               <span className={`px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wide border ${meta.className}`}>
                 {meta.label[language] || meta.label.EN}
               </span>
@@ -54,14 +54,14 @@ export default function SingleHadithPage() {
               )}
             </div>
 
-            <div className="glass rounded-3xl border border-border/50 p-8 sm:p-12 mb-8 relative overflow-hidden">
-              <BookMarked className="w-10 h-10 text-primary/20 absolute top-6 right-6" />
+            <div className="glass rounded-3xl border border-border/50 p-8 sm:p-12 mb-8 relative overflow-hidden" dir={isRtl ? 'rtl' : 'ltr'}>
+              <BookMarked className={`w-10 h-10 text-primary/20 absolute top-6 ${isRtl ? 'left-6' : 'right-6'}`} />
               <p className="font-serif text-2xl sm:text-3xl text-foreground leading-relaxed whitespace-pre-wrap">
                 {hadith.text}
               </p>
             </div>
 
-            <div className="flex flex-wrap gap-x-8 gap-y-2 text-sm text-muted-foreground border-t border-border/30 pt-6">
+            <div className="flex flex-wrap gap-x-8 gap-y-2 text-sm text-muted-foreground border-t border-border/30 pt-6" dir={isRtl ? 'rtl' : 'ltr'}>
               {hadith.narrator && (
                 <div>
                   <span className="font-semibold text-foreground">{t('hadiths.narrator')}: </span>

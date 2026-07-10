@@ -10,7 +10,7 @@ export function PostCard({ post }: { post: any }) {
   const coverSrc = resolvePostCover(post);
 
   return (
-    <Link href={`/posts/${post.slug}`} className="block h-full group">
+    <Link href={`/posts/${post.slug}`} className="block h-full group" dir={isRtl ? 'rtl' : 'ltr'}>
       <motion.div
         whileHover={{ y: -4 }}
         transition={{ duration: 0.2 }}

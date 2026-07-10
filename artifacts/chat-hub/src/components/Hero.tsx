@@ -52,7 +52,6 @@ export function Hero() {
     <section 
       ref={containerRef}
       className="relative min-h-[100dvh] flex items-center justify-center overflow-hidden bg-background"
-      dir={isRtl ? 'rtl' : 'ltr'}
     >
       {/* Background Imagery & Parallax */}
       <motion.div 
@@ -61,13 +60,13 @@ export function Hero() {
       >
         {/* Main Desert Background */}
         <div 
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          className="absolute inset-0 bg-cover bg-[center_top] md:bg-center bg-no-repeat"
           style={{ backgroundImage: `url('/hero_desert.jpg')` }}
         />
         
         {/* Geometric Accent Overlay */}
         <div 
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-40 mix-blend-color-dodge"
+          className="absolute inset-0 bg-cover bg-[center_top] md:bg-center bg-no-repeat opacity-40 mix-blend-color-dodge"
           style={{ 
             backgroundImage: `url('/hero_geometric.jpg')`,
             maskImage: 'linear-gradient(to bottom, black 20%, transparent 80%)',
@@ -123,25 +122,26 @@ export function Hero() {
       </div>
 
       {/* Hero Content */}
-      <div className="container relative z-10 px-5 sm:px-6 lg:px-8 mx-auto w-full h-full flex flex-col justify-center pt-28 pb-20">
+      <div className="container relative z-10 px-5 sm:px-6 lg:px-8 mx-auto w-full h-full flex flex-col justify-center pt-32 pb-24 md:pt-28 md:pb-20">
         <motion.div 
           style={{ y: yText, opacity: opacityText }}
-          className={`max-w-4xl flex flex-col ${isRtl ? 'items-end text-right ml-auto' : 'items-start text-left mr-auto'}`}
+          className={`max-w-4xl flex flex-col ${isRtl ? 'items-center md:items-end text-center md:text-right md:ml-auto' : 'items-center md:items-start text-center md:text-left md:mr-auto'}`}
         >
           {/* Eyebrow */}
           <motion.div
             initial={{ opacity: 0, x: isRtl ? 30 : -30 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
-            className="flex items-center gap-4 mb-6"
+            className="flex items-center gap-3 md:gap-4 mb-4 md:mb-6"
+            dir={isRtl ? 'rtl' : 'ltr'}
           >
-            <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primary/10 border border-primary/25 text-primary shadow-[0_0_15px_rgba(var(--primary),0.3)]">
-              <Sparkles className="w-5 h-5" />
+            <div className="flex items-center justify-center w-8 h-8 md:w-10 md:h-10 rounded-full bg-primary/10 border border-primary/25 text-primary shadow-[0_0_15px_rgba(var(--primary),0.3)] shrink-0">
+              <Sparkles className="w-4 h-4 md:w-5 md:h-5" />
             </div>
-            <span className="text-sm md:text-base font-bold tracking-[0.25em] uppercase text-primary drop-shadow-sm">
+            <span className="text-[10px] sm:text-xs md:text-base font-bold tracking-[0.2em] md:tracking-[0.25em] uppercase text-primary drop-shadow-sm">
               {t('hero.eyebrow')}
             </span>
-            <div className={`w-16 h-px bg-gradient-to-r ${isRtl ? 'from-transparent to-primary/50' : 'from-primary/50 to-transparent'}`} />
+            <div className={`w-8 md:w-16 h-px bg-gradient-to-r ${isRtl ? 'from-transparent to-primary/50' : 'from-primary/50 to-transparent'} hidden md:block`} />
           </motion.div>
 
           {/* Headline */}
@@ -149,7 +149,8 @@ export function Hero() {
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
-            className="text-5xl sm:text-6xl md:text-7xl lg:text-[6.5rem] font-bold font-serif leading-[1.05] tracking-tight mb-8 drop-shadow-2xl text-transparent bg-clip-text bg-gradient-to-b from-foreground via-foreground to-foreground/60 text-balance"
+            className="text-4xl sm:text-5xl md:text-7xl lg:text-[6.5rem] font-bold font-serif leading-[1.1] md:leading-[1.05] tracking-tight md:tracking-tight mb-6 md:mb-8 drop-shadow-2xl text-transparent bg-clip-text bg-gradient-to-b from-foreground via-foreground to-foreground/60 text-balance"
+            dir={isRtl ? 'rtl' : 'ltr'}
           >
             {t('hero.headline')}
           </motion.h1>
@@ -159,7 +160,8 @@ export function Hero() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, delay: 0.5, ease: [0.16, 1, 0.3, 1] }}
-            className="text-2xl sm:text-3xl md:text-4xl text-primary font-serif italic font-light leading-snug drop-shadow-lg mb-6 max-w-3xl text-balance"
+            className="text-xl sm:text-2xl md:text-4xl text-primary font-serif italic font-light leading-snug drop-shadow-lg mb-5 md:mb-6 max-w-3xl text-balance"
+            dir={isRtl ? 'rtl' : 'ltr'}
           >
             &ldquo;{t('hero.question')}&rdquo;
           </motion.p>
@@ -168,7 +170,8 @@ export function Hero() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, delay: 0.6, ease: [0.16, 1, 0.3, 1] }}
-            className="text-lg md:text-xl lg:text-2xl text-foreground/80 font-medium leading-relaxed max-w-2xl mb-12 text-balance"
+            className="text-base sm:text-lg md:text-xl lg:text-2xl text-foreground/80 font-medium leading-relaxed max-w-2xl mb-8 md:mb-12 text-balance"
+            dir={isRtl ? 'rtl' : 'ltr'}
           >
             {t('hero.invite')}
           </motion.p>
@@ -178,7 +181,8 @@ export function Hero() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 1, delay: 0.8 }}
-            className="flex flex-wrap gap-3 mb-14"
+            className="flex flex-wrap justify-center md:justify-start gap-2 md:gap-3 mb-10 md:mb-14"
+            dir={isRtl ? 'rtl' : 'ltr'}
           >
             {pills.map((pill, idx) => (
               <motion.span

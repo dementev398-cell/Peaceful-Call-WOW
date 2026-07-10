@@ -34,12 +34,12 @@ export function SupportContact() {
   };
 
   return (
-    <section id="contact" className="py-32 bg-card relative" dir={isRtl ? 'rtl' : 'ltr'}>
+    <section id="contact" className="py-32 bg-card relative" dir="ltr">
       <div className="container mx-auto px-6 max-w-6xl relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
           
           <ScrollReveal>
-            <div className="bg-background border border-border p-10 md:p-14 rounded-[2rem] h-full flex flex-col shadow-lg hover:shadow-xl transition-shadow duration-500">
+            <div className="bg-background border border-border p-10 md:p-14 rounded-[2rem] h-full flex flex-col shadow-lg hover:shadow-xl transition-shadow duration-500" dir={isRtl ? 'rtl' : 'ltr'}>
               <h3 className="text-3xl md:text-4xl font-serif font-bold text-foreground mb-4">
                 {t('contact.title')}
               </h3>
@@ -109,7 +109,7 @@ export function SupportContact() {
           </ScrollReveal>
 
           <ScrollReveal delay="100">
-            <div className="bg-primary text-primary-foreground p-12 md:p-16 rounded-[2rem] h-full flex flex-col justify-center text-center shadow-lg hover:shadow-xl transition-shadow duration-500 relative overflow-hidden group">
+            <div className="bg-primary text-primary-foreground p-12 md:p-16 rounded-[2rem] h-full flex flex-col justify-center text-center shadow-lg hover:shadow-xl transition-shadow duration-500 relative overflow-hidden group" dir={isRtl ? 'rtl' : 'ltr'}>
               <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.1),transparent_50%)]"></div>
               <h3 className="text-3xl md:text-4xl font-serif font-bold mb-6 relative z-10">
                 {t('support.title')}

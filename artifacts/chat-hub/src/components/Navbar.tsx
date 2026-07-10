@@ -4,12 +4,12 @@ import { useState, useEffect } from 'react';
 import { useContentDict } from '@/hooks/use-content';
 import { SignOutButton, useUser } from '@clerk/react';
 import { UserMenu } from './UserMenu';
-import { Menu, X, LogOut, BookOpen, ScrollText } from 'lucide-react';
+import { Menu, X, LogOut, BookOpen, ScrollText, Users, HelpCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useGetMe } from '@workspace/api-client-react';
 
 export function Navbar() {
-  const { language, setLanguage, t, isRtl } = useLanguage();
+  const { language, setLanguage, t } = useLanguage();
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const { dict } = useContentDict();
@@ -33,7 +33,7 @@ export function Navbar() {
           ? 'glass-strong border-b border-border/30 py-2.5'
           : 'bg-transparent py-4'
       }`}
-      dir={isRtl ? 'rtl' : 'ltr'}
+      dir="ltr"
     >
       <div className="container mx-auto px-4 sm:px-6 flex items-center justify-between gap-3">
 
@@ -49,10 +49,12 @@ export function Navbar() {
 
         {/* Desktop Nav Links */}
         <nav className="hidden md:flex items-center gap-5">
-          <a href="#about" className="text-xs font-bold tracking-widest text-muted-foreground hover:text-foreground transition-colors uppercase">
+          <a href="#about" className="text-xs font-bold tracking-widest text-muted-foreground hover:text-foreground transition-colors uppercase flex items-center gap-1.5">
+            <Users className="w-3.5 h-3.5" />
             {t('nav.about')}
           </a>
-          <a href="#faq" className="text-xs font-bold tracking-widest text-muted-foreground hover:text-foreground transition-colors uppercase">
+          <a href="#faq" className="text-xs font-bold tracking-widest text-muted-foreground hover:text-foreground transition-colors uppercase flex items-center gap-1.5">
+            <HelpCircle className="w-3.5 h-3.5" />
             {t('nav.faq')}
           </a>
           <Link href="/posts" className="text-xs font-bold tracking-widest text-muted-foreground hover:text-primary transition-colors uppercase flex items-center gap-1.5">
@@ -129,10 +131,12 @@ export function Navbar() {
             transition={{ duration: 0.25, ease: "easeOut" }}
             className="md:hidden absolute top-full left-0 right-0 glass-strong border-b border-border/30 px-5 py-6 flex flex-col gap-2 shadow-2xl origin-top"
           >
-            <a href="#about" onClick={() => setMenuOpen(false)} className="flex items-center text-base font-semibold tracking-widest text-muted-foreground hover:text-foreground transition-colors uppercase py-3 border-b border-border/20">
+            <a href="#about" onClick={() => setMenuOpen(false)} className="flex items-center gap-3 text-base font-semibold tracking-widest text-muted-foreground hover:text-foreground transition-colors uppercase py-3 border-b border-border/20">
+              <Users className="w-5 h-5 text-muted-foreground" />
               {t('nav.about')}
             </a>
-            <a href="#faq" onClick={() => setMenuOpen(false)} className="flex items-center text-base font-semibold tracking-widest text-muted-foreground hover:text-foreground transition-colors uppercase py-3 border-b border-border/20">
+            <a href="#faq" onClick={() => setMenuOpen(false)} className="flex items-center gap-3 text-base font-semibold tracking-widest text-muted-foreground hover:text-foreground transition-colors uppercase py-3 border-b border-border/20">
+              <HelpCircle className="w-5 h-5 text-muted-foreground" />
               {t('nav.faq')}
             </a>
             <Link href="/posts" onClick={() => setMenuOpen(false)} className="flex items-center gap-3 text-base font-semibold tracking-widest text-muted-foreground hover:text-primary transition-colors uppercase py-3 border-b border-border/20">

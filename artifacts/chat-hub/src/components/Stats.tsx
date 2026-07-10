@@ -12,7 +12,7 @@ export function Stats() {
   ];
 
   return (
-    <section className="py-20 md:py-32 bg-primary relative text-primary-foreground overflow-hidden" dir={isRtl ? 'rtl' : 'ltr'}>
+    <section className="py-20 md:py-32 bg-primary relative text-primary-foreground overflow-hidden" dir="ltr">
       {/* Refined elegant texture instead of grid lines */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,0,0,0.15)_0%,transparent_100%)]"></div>
       <div className="absolute inset-0 shimmer opacity-20"></div>
@@ -25,7 +25,7 @@ export function Stats() {
                 <span className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-serif font-bold mb-3 md:mb-4 tracking-tighter drop-shadow-lg text-primary-foreground">
                   {stat.value}
                 </span>
-                <span className="text-[10px] md:text-sm font-bold uppercase tracking-[0.2em] opacity-80 text-primary-foreground/90">
+                <span className="text-[10px] md:text-sm font-bold uppercase tracking-[0.2em] opacity-80 text-primary-foreground/90" dir={isRtl ? 'rtl' : 'ltr'}>
                   {stat.label}
                 </span>
               </div>

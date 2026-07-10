@@ -12,7 +12,7 @@ export function Verses() {
   ];
 
   return (
-    <section className="py-24 md:py-32 bg-card/30 border-y border-border/40 relative overflow-hidden" dir={isRtl ? 'rtl' : 'ltr'}>
+    <section className="py-24 md:py-32 bg-card/30 border-y border-border/40 relative overflow-hidden" dir="ltr">
       {/* Decorative gradient lines */}
       <div className="absolute left-0 top-0 w-px h-full bg-gradient-to-b from-transparent via-primary/20 to-transparent ml-4 md:ml-8 hidden sm:block"></div>
       <div className="absolute right-0 top-0 w-px h-full bg-gradient-to-b from-transparent via-primary/20 to-transparent mr-4 md:mr-8 hidden sm:block"></div>
@@ -20,7 +20,7 @@ export function Verses() {
 
       <div className="container mx-auto px-6 max-w-5xl relative z-10">
         <ScrollReveal>
-          <div className="text-center mb-16 md:mb-24">
+          <div className="text-center mb-16 md:mb-24" dir={isRtl ? 'rtl' : 'ltr'}>
             <h2 className="text-3xl md:text-5xl font-serif font-bold text-foreground tracking-tight drop-shadow-md">
               {t('verses.title')}
             </h2>
@@ -31,9 +31,9 @@ export function Verses() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-16">
           {versesList.map((verse, idx) => (
             <ScrollReveal key={idx} delay={idx % 2 === 0 ? '0' : '100'} className="h-full">
-              <div className="h-full group relative">
+              <div className="h-full group relative" dir={isRtl ? 'rtl' : 'ltr'}>
                 <div className="absolute -inset-4 bg-[radial-gradient(ellipse_at_center,var(--tw-gradient-stops))] from-primary/10 via-transparent to-transparent rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none"></div>
-                <div className="relative p-8 h-full flex flex-col justify-center border-l-2 border-primary/20 group-hover:border-primary bg-card/20 hover:bg-card/40 rounded-r-3xl transition-all duration-500 shadow-sm hover:shadow-lg">
+                <div className={`relative p-8 h-full flex flex-col justify-center ${isRtl ? 'border-r-2 border-r-primary/20 group-hover:border-r-primary rounded-l-3xl' : 'border-l-2 border-l-primary/20 group-hover:border-l-primary rounded-r-3xl'} bg-card/20 hover:bg-card/40 transition-all duration-500 shadow-sm hover:shadow-lg`}>
                   <p className="text-xl md:text-3xl font-serif text-foreground/90 leading-relaxed mb-6 font-light italic drop-shadow-sm group-hover:text-foreground transition-colors">
                     «{verse.quote}»
                   </p>

@@ -2,6 +2,7 @@ import { PageTransition } from '@/components/PageTransition';
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
 import { ScrollReveal } from '@/components/ScrollReveal';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useListHadiths, type HadithGrade } from '@workspace/api-client-react';
 import { Link } from 'wouter';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -15,7 +16,7 @@ type SortMode = 'newest' | 'oldest' | 'alpha';
 const LOCALE_TAGS: Record<string, string> = { RU: 'ru', EN: 'en', AR: 'ar' };
 
 export default function HadithsPage() {
-  const { t, isRtl, language } = useLanguage();
+  const { t, language } = useLanguage();
   const localeTag = LOCALE_TAGS[language] || 'en';
   const [grade, setGrade] = useState<string>('');
   const [query, setQuery] = useState('');
@@ -54,11 +55,11 @@ export default function HadithsPage() {
                 <ScrollText className="w-4 h-4" />
                 {t('hadiths.title')}
               </div>
-              <h1 className="text-4xl md:text-6xl font-serif font-bold text-foreground mb-6 leading-tight">
+              <h1 className="text-4xl md:text-6xl font-serif font-bold text-foreground mb-6 leading-tight" dir="auto">
                 {t('hadiths.title')}
               </h1>
               <div className="w-20 h-1 bg-gradient-to-r from-primary/0 via-primary to-primary/0 mx-auto mb-6 rounded-full" />
-              <p className="text-xl text-muted-foreground max-w-2xl mx-auto font-serif">
+              <p className="text-xl text-muted-foreground max-w-2xl mx-auto font-serif" dir="auto">
                 {t('hadiths.subtitle')}
               </p>
             </div>
@@ -77,15 +78,16 @@ export default function HadithsPage() {
               </div>
               <div className="hidden sm:block w-px h-6 bg-border/50 self-center" />
               <div className="flex gap-2">
-                <select
-                  value={sortMode}
-                  onChange={(e) => setSortMode(e.target.value as SortMode)}
-                  className="flex-1 sm:w-auto h-12 px-4 rounded-full bg-muted/20 border border-transparent text-sm text-foreground focus:outline-none focus:bg-muted/40 transition-colors"
-                >
-                  <option value="newest">{t('sort.newest')}</option>
-                  <option value="oldest">{t('sort.oldest')}</option>
-                  <option value="alpha">{t('sort.alpha')}</option>
-                </select>
+                <Select value={sortMode} onValueChange={(val) => setSortMode(val as SortMode)}>
+                  <SelectTrigger className="flex-1 sm:w-auto h-12 px-4 rounded-full bg-muted/20 border border-transparent text-sm text-foreground focus:ring-0 focus:ring-offset-0 focus:bg-muted/40 transition-colors">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent className="rounded-2xl border-border/40 bg-card/95 backdrop-blur-xl shadow-xl">
+                    <SelectItem value="newest" className="rounded-xl focus:bg-primary/20 focus:text-primary">{t('sort.newest')}</SelectItem>
+                    <SelectItem value="oldest" className="rounded-xl focus:bg-primary/20 focus:text-primary">{t('sort.oldest')}</SelectItem>
+                    <SelectItem value="alpha" className="rounded-xl focus:bg-primary/20 focus:text-primary">{t('sort.alpha')}</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
             </div>
           </ScrollReveal>
@@ -145,7 +147,7 @@ export default function HadithsPage() {
                             <span className="text-xs text-muted-foreground">{hadith.topic}</span>
                           )}
                         </div>
-                        <p className="font-serif text-lg text-foreground leading-relaxed mb-4 line-clamp-4">
+                        <p className="font-serif text-lg text-foreground leading-relaxed mb-4 line-clamp-4" dir="auto">
                           {hadith.text}
                         </p>
                         <div className="flex items-center justify-between pt-4 border-t border-border/30">

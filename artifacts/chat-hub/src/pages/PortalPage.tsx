@@ -66,7 +66,7 @@ export default function PortalPage() {
 
       <main className="flex-grow container mx-auto px-6 pt-32 pb-24 max-w-5xl">
         <ScrollReveal>
-          <div className="mb-16">
+          <div className="mb-16" dir={isRtl ? 'rtl' : 'ltr'}>
             <h1 className="text-4xl md:text-5xl font-serif font-bold text-foreground mb-4">
               {greeting}
             </h1>
@@ -86,6 +86,7 @@ export default function PortalPage() {
                     whileHover={{ y: -4 }}
                     transition={{ duration: 0.2 }}
                     className="glass rounded-[2rem] p-8 h-full flex flex-col border border-border/30 hover:border-primary/40 transition-all duration-300 hover:shadow-xl hover:shadow-primary/5 group"
+                    dir={isRtl ? 'rtl' : 'ltr'}
                   >
                     <div className="w-14 h-14 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center mb-6 group-hover:scale-110 group-hover:bg-primary/20 transition-all duration-300">
                       <Icon className="w-6 h-6 text-primary" />
@@ -98,7 +99,7 @@ export default function PortalPage() {
                     </p>
                     <div className="mt-auto flex items-center text-sm font-bold text-primary uppercase tracking-wider gap-2">
                       {card.cta}
-                      <ArrowRight className="w-4 h-4 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300" />
+                      <ArrowRight className={`w-4 h-4 opacity-0 transition-all duration-300 ${isRtl ? 'translate-x-2 group-hover:-translate-x-0 rotate-180' : '-translate-x-2 group-hover:translate-x-0'}`} />
                     </div>
                   </motion.div>
                 </Link>
@@ -113,6 +114,7 @@ export default function PortalPage() {
                   whileHover={{ y: -4 }}
                   transition={{ duration: 0.2 }}
                   className="bg-primary rounded-[2rem] p-8 h-full flex flex-col border border-primary/50 hover:brightness-110 transition-all duration-300 hover:shadow-xl hover:shadow-primary/20 group text-primary-foreground glow-gold"
+                  dir={isRtl ? 'rtl' : 'ltr'}
                 >
                   <div className="w-14 h-14 rounded-full bg-background/20 flex items-center justify-center mb-6 group-hover:scale-110 transition-all duration-300">
                     <Shield className="w-6 h-6" />
@@ -125,7 +127,7 @@ export default function PortalPage() {
                   </p>
                   <div className="mt-auto flex items-center text-sm font-bold uppercase tracking-wider gap-2">
                     {t('portal.manage')}
-                    <ArrowRight className="w-4 h-4 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300" />
+                    <ArrowRight className={`w-4 h-4 opacity-0 transition-all duration-300 ${isRtl ? 'translate-x-2 group-hover:-translate-x-0 rotate-180' : '-translate-x-2 group-hover:translate-x-0'}`} />
                   </div>
                 </motion.div>
               </Link>

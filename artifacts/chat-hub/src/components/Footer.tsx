@@ -48,7 +48,7 @@ export function Footer() {
   };
 
   return (
-    <footer className="bg-background border-t border-border/40 pt-18 pb-8 relative overflow-hidden" dir={isRtl ? 'rtl' : 'ltr'}>
+    <footer className="bg-background border-t border-border/40 pt-18 pb-8 relative overflow-hidden" dir="ltr">
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-2/3 h-px bg-gradient-to-r from-transparent via-primary/40 to-transparent" />
 
       <div className="container mx-auto px-5 sm:px-6 flex flex-col items-center text-center">
@@ -65,7 +65,7 @@ export function Footer() {
         </ScrollReveal>
 
         <ScrollReveal delay="100">
-          <p className="text-muted-foreground text-base mb-8 max-w-xs font-serif italic leading-relaxed">
+          <p className="text-muted-foreground text-base mb-8 max-w-xs font-serif italic leading-relaxed" dir={isRtl ? 'rtl' : 'ltr'}>
             &ldquo;{t('footer.tagline')}&rdquo;
           </p>
         </ScrollReveal>

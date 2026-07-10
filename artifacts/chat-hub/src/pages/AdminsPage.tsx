@@ -39,7 +39,7 @@ export default function AdminsPage() {
       <Navbar />
       <main className="flex-grow container mx-auto px-6 py-32 max-w-5xl">
         <ScrollReveal>
-          <div className="text-center mb-16">
+          <div className="text-center mb-16" dir={isRtl ? 'rtl' : 'ltr'}>
             <h1 className="text-4xl md:text-5xl font-serif font-bold text-foreground mb-4">
               {t('admins.team')}
             </h1>
@@ -62,6 +62,7 @@ export default function AdminsPage() {
                   whileHover={{ y: -4 }}
                   transition={{ duration: 0.2 }}
                   className="glass rounded-[2rem] p-8 text-center flex flex-col items-center border border-border/30 hover:border-primary/30 transition-all duration-300 hover:shadow-xl hover:shadow-primary/5"
+                  dir={isRtl ? 'rtl' : 'ltr'}
                 >
                   <div className={`w-24 h-24 rounded-full flex items-center justify-center mb-6 border-2 relative ${
                     admin.role === 'owner'

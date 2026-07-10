@@ -19,10 +19,10 @@ export function RecentPosts() {
   if (!posts || posts.length === 0) return null;
 
   return (
-    <section className="py-32 bg-muted/30" dir={isRtl ? 'rtl' : 'ltr'}>
+    <section className="py-32 bg-muted/30" dir="ltr">
       <div className="container mx-auto px-6 max-w-6xl">
         <ScrollReveal>
-          <div className="text-center mb-16">
+          <div className="text-center mb-16" dir={isRtl ? 'rtl' : 'ltr'}>
             <h2 className="text-4xl md:text-5xl font-serif font-bold text-foreground">
               {t('posts.title') || 'Наши публикации'}
             </h2>

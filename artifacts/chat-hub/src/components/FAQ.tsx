@@ -15,13 +15,13 @@ export function FAQ() {
   ];
 
   return (
-    <section id="faq" className="py-24 md:py-32 bg-card/30 border-y border-border/40 relative overflow-hidden" dir={isRtl ? 'rtl' : 'ltr'}>
+    <section id="faq" className="py-24 md:py-32 bg-card/30 border-y border-border/40 relative overflow-hidden" dir="ltr">
       {/* Dynamic background glow */}
       <div className="absolute bottom-0 right-0 w-[600px] h-[600px] bg-primary/5 rounded-full blur-[120px] translate-y-1/2 translate-x-1/2 pointer-events-none" />
 
       <div className="container mx-auto px-6 max-w-4xl relative z-10">
         <ScrollReveal>
-          <div className="text-center mb-16 md:mb-20">
+          <div className="text-center mb-16 md:mb-20" dir={isRtl ? 'rtl' : 'ltr'}>
             <h2 className="text-3xl md:text-5xl font-serif font-bold text-foreground tracking-tight drop-shadow-md">
               {t('faq.title')}
             </h2>
@@ -30,7 +30,7 @@ export function FAQ() {
         </ScrollReveal>
 
         <ScrollReveal delay="100">
-          <div className="glass-strong rounded-[2rem] p-6 md:p-10 shadow-2xl border border-border/40">
+          <div className="glass-strong rounded-[2rem] p-6 md:p-10 shadow-2xl border border-border/40" dir={isRtl ? 'rtl' : 'ltr'}>
             <Accordion type="single" collapsible className="w-full space-y-4">
               {faqs.map((faq, idx) => (
                 <AccordionItem key={idx} value={`item-${idx}`} className="border border-border/30 bg-card/40 rounded-2xl px-6 data-[state=open]:border-primary/40 data-[state=open]:bg-card/60 transition-all duration-300 shadow-sm hover:shadow-md">

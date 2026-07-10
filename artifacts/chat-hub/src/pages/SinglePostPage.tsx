@@ -39,7 +39,7 @@ export default function SinglePostPage() {
   }
 
   return (
-    <PageTransition className="min-h-screen flex flex-col bg-background gradient-bg" dir={isRtl ? 'rtl' : 'ltr'}>
+    <PageTransition className="min-h-screen flex flex-col bg-background gradient-bg" dir="ltr">
       <Navbar />
 
       <main className="flex-grow pt-24 pb-32">
@@ -88,7 +88,7 @@ export default function SinglePostPage() {
           )}
 
           <ScrollReveal delay="150">
-            <div className="prose prose-lg dark:prose-invert prose-p:font-serif prose-p:text-lg prose-p:leading-relaxed prose-headings:font-serif prose-a:text-primary mx-auto max-w-3xl mb-16">
+            <div className="prose prose-lg dark:prose-invert prose-p:font-serif prose-p:text-lg prose-p:leading-relaxed prose-headings:font-serif prose-a:text-primary mx-auto max-w-3xl mb-16" dir={isRtl ? 'rtl' : 'ltr'}>
               {post.content.split('\n').map((paragraph, i) => {
                 if (!paragraph.trim()) return null;
                 if (paragraph.startsWith('## ')) return <h2 key={i}>{paragraph.replace('## ', '')}</h2>;
