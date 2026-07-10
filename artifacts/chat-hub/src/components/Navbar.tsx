@@ -6,6 +6,7 @@ import { SignOutButton, useUser } from '@clerk/react';
 import { UserMenu } from './UserMenu';
 import { Menu, X, LogOut, BookOpen, ScrollText } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useGetMe } from '@workspace/api-client-react';
 
 export function Navbar() {
   const { language, setLanguage, t, isRtl } = useLanguage();
@@ -13,6 +14,8 @@ export function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const { dict } = useContentDict();
   const { isSignedIn } = useUser();
+  const { data: me } = useGetMe();
+  const isAdmin = !!me && (me.role === 'owner' || me.role === 'editor');
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
@@ -85,12 +88,14 @@ export function Navbar() {
           <div className="hidden sm:flex items-center gap-2">
             {isSignedIn ? (
               <>
-                <Link
-                  href="/admin"
-                  className="h-8 px-4 rounded-full bg-primary/10 text-primary text-xs font-bold tracking-widest uppercase hover:bg-primary/20 transition-all duration-300 inline-flex items-center border border-primary/20 hover:border-primary/40"
-                >
-                  {t('nav.admin')}
-                </Link>
+                {isAdmin && (
+                  <Link
+                    href="/admin"
+                    className="h-8 px-4 rounded-full bg-primary/10 text-primary text-xs font-bold tracking-widest uppercase hover:bg-primary/20 transition-all duration-300 inline-flex items-center border border-primary/20 hover:border-primary/40"
+                  >
+                    {t('nav.admin')}
+                  </Link>
+                )}
                 <UserMenu />
               </>
             ) : (
@@ -118,45 +123,47 @@ export function Navbar() {
       <AnimatePresence>
         {menuOpen && (
           <motion.div
-            initial={{ opacity: 0, y: -8 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -8 }}
-            transition={{ duration: 0.2 }}
-            className="md:hidden absolute top-full left-0 right-0 glass-strong border-b border-border/30 px-5 py-5 flex flex-col gap-3.5 shadow-2xl"
+            initial={{ opacity: 0, y: -8, scale: 0.98 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -8, scale: 0.98 }}
+            transition={{ duration: 0.25, ease: "easeOut" }}
+            className="md:hidden absolute top-full left-0 right-0 glass-strong border-b border-border/30 px-5 py-6 flex flex-col gap-2 shadow-2xl origin-top"
           >
-            <a href="#about" onClick={() => setMenuOpen(false)} className="text-sm font-semibold tracking-widest text-muted-foreground hover:text-foreground transition-colors uppercase py-1.5 border-b border-border/20">
+            <a href="#about" onClick={() => setMenuOpen(false)} className="flex items-center text-base font-semibold tracking-widest text-muted-foreground hover:text-foreground transition-colors uppercase py-3 border-b border-border/20">
               {t('nav.about')}
             </a>
-            <a href="#faq" onClick={() => setMenuOpen(false)} className="text-sm font-semibold tracking-widest text-muted-foreground hover:text-foreground transition-colors uppercase py-1.5 border-b border-border/20">
+            <a href="#faq" onClick={() => setMenuOpen(false)} className="flex items-center text-base font-semibold tracking-widest text-muted-foreground hover:text-foreground transition-colors uppercase py-3 border-b border-border/20">
               {t('nav.faq')}
             </a>
-            <Link href="/posts" onClick={() => setMenuOpen(false)} className="flex items-center gap-2 text-sm font-semibold tracking-widest text-muted-foreground hover:text-primary transition-colors uppercase py-1.5 border-b border-border/20">
-              <BookOpen className="w-4 h-4" />
+            <Link href="/posts" onClick={() => setMenuOpen(false)} className="flex items-center gap-3 text-base font-semibold tracking-widest text-muted-foreground hover:text-primary transition-colors uppercase py-3 border-b border-border/20">
+              <BookOpen className="w-5 h-5 text-primary/70" />
               {t('nav.posts')}
             </Link>
-            <Link href="/hadiths" onClick={() => setMenuOpen(false)} className="flex items-center gap-2 text-sm font-semibold tracking-widest text-muted-foreground hover:text-primary transition-colors uppercase py-1.5 border-b border-border/20">
-              <ScrollText className="w-4 h-4" />
+            <Link href="/hadiths" onClick={() => setMenuOpen(false)} className="flex items-center gap-3 text-base font-semibold tracking-widest text-muted-foreground hover:text-primary transition-colors uppercase py-3 border-b border-border/20">
+              <ScrollText className="w-5 h-5 text-primary/70" />
               {t('nav.hadiths')}
             </Link>
-            <div className="pt-1.5">
+            <div className="pt-4">
               {isSignedIn ? (
-                <div className="flex items-center gap-2.5">
-                  <Link href="/admin" onClick={() => setMenuOpen(false)} className="flex-1 inline-flex items-center justify-center h-10 rounded-full bg-primary/10 text-primary text-xs font-bold tracking-widest uppercase border border-primary/20">
-                    {t('nav.admin')}
-                  </Link>
+                <div className="flex flex-col gap-3">
+                  {isAdmin && (
+                    <Link href="/admin" onClick={() => setMenuOpen(false)} className="w-full inline-flex items-center justify-center h-12 rounded-full bg-primary/10 text-primary text-sm font-bold tracking-widest uppercase border border-primary/20 shadow-inner">
+                      {t('nav.admin')}
+                    </Link>
+                  )}
                   <SignOutButton>
-                    <button className="flex items-center gap-2 h-10 px-4 rounded-full border border-border text-muted-foreground text-xs font-bold uppercase hover:text-destructive hover:border-destructive transition-all">
-                      <LogOut className="w-3.5 h-3.5" />
+                    <button className="w-full flex items-center justify-center gap-2 h-12 rounded-full border border-border text-muted-foreground text-sm font-bold uppercase hover:text-destructive hover:border-destructive transition-all hover:bg-destructive/10">
+                      <LogOut className="w-4 h-4" />
                       {t('nav.signout')}
                     </button>
                   </SignOutButton>
                 </div>
               ) : (
-                <div className="flex items-center gap-2.5">
-                  <Link href="/sign-in" onClick={() => setMenuOpen(false)} className="flex-1 inline-flex items-center justify-center h-10 rounded-full border border-primary/50 text-primary text-xs font-bold tracking-widest uppercase">
+                <div className="flex flex-col sm:flex-row items-center gap-3">
+                  <Link href="/sign-in" onClick={() => setMenuOpen(false)} className="w-full inline-flex items-center justify-center h-12 rounded-full border border-primary/50 text-primary text-sm font-bold tracking-widest uppercase hover:bg-primary/5">
                     {t('nav.signin')}
                   </Link>
-                  <Link href="/sign-up" onClick={() => setMenuOpen(false)} className="flex-1 inline-flex items-center justify-center h-10 rounded-full bg-primary text-primary-foreground text-xs font-bold tracking-widest uppercase">
+                  <Link href="/sign-up" onClick={() => setMenuOpen(false)} className="w-full inline-flex items-center justify-center h-12 rounded-full bg-primary text-primary-foreground text-sm font-bold tracking-widest uppercase shadow-lg shadow-primary/20">
                     {t('nav.signup')}
                   </Link>
                 </div>

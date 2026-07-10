@@ -20,13 +20,24 @@ import { Loader2, Search, Send, FilePlus, Paperclip, X, Download, FileImage, Fil
 import { ScrollReveal } from "@/components/ScrollReveal";
 import { useRequestUploadUrl } from "@workspace/api-client-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { useSearch } from "wouter";
 
 export default function MessagesPage() {
   const { user } = useUser();
+  const search = useSearch();
   const [activeConvId, setActiveConvId] = useState<number | null>(null);
   
   const { data: conversations = [], isLoading: loadingConvs, refetch: refetchConvs } = useListConversations();
   const markRead = useMarkConversationRead();
+
+  // Deep-link support: /messages?conv=<id> (e.g. from "Write message" on the admin's profile)
+  useEffect(() => {
+    const convParam = new URLSearchParams(search).get('conv');
+    if (convParam) {
+      const id = Number(convParam);
+      if (!Number.isNaN(id)) setActiveConvId(id);
+    }
+  }, [search]);
 
   const handleSelectConv = (id: number) => {
     setActiveConvId(id);
@@ -51,13 +62,13 @@ export default function MessagesPage() {
           </div>
         </ScrollReveal>
 
-        <div className="bg-card border border-border rounded-3xl overflow-hidden h-[calc(100vh-280px)] min-h-[600px] flex shadow-xl">
+        <div className="bg-card/40 glass border border-border/40 rounded-[2rem] overflow-hidden h-[calc(100vh-280px)] min-h-[600px] flex shadow-2xl">
           {/* Sidebar */}
-          <div className={`${activeConvId ? 'hidden md:flex' : 'flex'} w-full md:w-80 lg:w-96 flex-col border-r border-border/50 bg-muted/10`}>
-            <div className="p-4 border-b border-border/50">
+          <div className={`${activeConvId ? 'hidden md:flex' : 'flex'} w-full md:w-80 lg:w-96 flex-col border-r border-border/40 bg-muted/10`}>
+            <div className="p-5 border-b border-border/40">
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                <Input placeholder="Поиск бесед..." className="pl-9 bg-background border-border/50" />
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                <Input placeholder="Поиск бесед..." className="pl-10 bg-background/50 border-border/40 rounded-full h-11" />
               </div>
             </div>
             

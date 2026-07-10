@@ -67,7 +67,7 @@ export function Hero() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2, duration: 0.7 }}
-          className="text-5xl md:text-7xl lg:text-8xl font-bold font-serif text-foreground leading-[1.1] mb-8 tracking-tight"
+          className="text-5xl md:text-7xl lg:text-8xl font-bold font-serif text-foreground leading-[1.1] mb-8 tracking-tight drop-shadow-2xl"
         >
           {t('hero.headline')}
         </motion.h1>
@@ -76,7 +76,7 @@ export function Hero() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.4 }}
-          className="text-xl md:text-2xl text-muted-foreground max-w-3xl mb-10 font-serif italic font-light leading-relaxed"
+          className="text-xl md:text-2xl text-primary/80 max-w-3xl mb-10 font-serif italic font-light leading-relaxed drop-shadow-md"
         >
           &ldquo;{t('hero.question')}&rdquo;
         </motion.p>

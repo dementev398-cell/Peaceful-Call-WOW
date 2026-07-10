@@ -1,8 +1,9 @@
 import { PageTransition } from '@/components/PageTransition';
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
-import { useListAdmins } from "@workspace/api-client-react";
-import { Link } from "wouter";
+import { useListAdmins, useStartDirectConversation } from "@workspace/api-client-react";
+import { useLocation } from "wouter";
+import { useUser } from "@clerk/react";
 import { ScrollReveal } from "@/components/ScrollReveal";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Loader2, MessageCircle, Crown, Shield } from "lucide-react";
@@ -11,6 +12,27 @@ import { motion } from "framer-motion";
 export default function AdminsPage() {
   const { data: admins, isLoading } = useListAdmins();
   const { t, isRtl } = useLanguage();
+  const [, navigate] = useLocation();
+  const { isSignedIn } = useUser();
+  const startDirect = useStartDirectConversation();
+
+  const handleWriteMessage = (clerkUserId: string) => {
+    if (!isSignedIn) {
+      navigate('/sign-in');
+      return;
+    }
+    startDirect.mutate(
+      { data: { targetClerkId: clerkUserId } },
+      {
+        onSuccess: (res) => {
+          navigate(`/messages?conv=${res.id}`);
+        },
+        onError: () => {
+          navigate('/messages');
+        },
+      }
+    );
+  };
 
   return (
     <PageTransition className="min-h-screen flex flex-col bg-background gradient-bg">
@@ -66,13 +88,18 @@ export default function AdminsPage() {
                       <><Shield className="w-3 h-3" /> {t('admins.admin')}</>
                     )}
                   </span>
-                  <Link
-                    href="/messages"
-                    className="mt-auto inline-flex items-center justify-center w-full h-12 rounded-full border border-primary/40 text-primary hover:bg-primary hover:text-primary-foreground font-semibold tracking-wide transition-all duration-300 gap-2 hover:glow-gold-sm"
+                  <button
+                    onClick={() => handleWriteMessage(admin.clerkUserId)}
+                    disabled={startDirect.isPending}
+                    className="mt-auto inline-flex items-center justify-center w-full h-12 rounded-full border border-primary/40 text-primary hover:bg-primary hover:text-primary-foreground font-semibold tracking-wide transition-all duration-300 gap-2 hover:glow-gold-sm disabled:opacity-60"
                   >
-                    <MessageCircle className="w-4 h-4" />
+                    {startDirect.isPending ? (
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : (
+                      <MessageCircle className="w-4 h-4" />
+                    )}
                     {t('admins.writeMessage')}
-                  </Link>
+                  </button>
                 </motion.div>
               </ScrollReveal>
             ))}

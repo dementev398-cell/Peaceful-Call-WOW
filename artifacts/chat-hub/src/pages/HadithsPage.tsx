@@ -5,17 +5,43 @@ import { ScrollReveal } from '@/components/ScrollReveal';
 import { useListHadiths, type HadithGrade } from '@workspace/api-client-react';
 import { Link } from 'wouter';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { Loader2, ScrollText, ArrowRight } from 'lucide-react';
+import { Loader2, ScrollText, ArrowRight, Search } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { GRADE_META } from '@/lib/hadithGrades';
+
+type SortMode = 'newest' | 'oldest' | 'alpha';
+
+const LOCALE_TAGS: Record<string, string> = { RU: 'ru', EN: 'en', AR: 'ar' };
 
 export default function HadithsPage() {
   const { t, isRtl, language } = useLanguage();
+  const localeTag = LOCALE_TAGS[language] || 'en';
   const [grade, setGrade] = useState<string>('');
-  const { data: hadiths = [], isLoading } = useListHadiths(
+  const [query, setQuery] = useState('');
+  const [sortMode, setSortMode] = useState<SortMode>('newest');
+  const { data: allHadiths = [], isLoading } = useListHadiths(
     grade ? { grade: grade as HadithGrade } : undefined
   );
+
+  const hadiths = useMemo(() => {
+    let list = allHadiths;
+    const q = query.trim().toLowerCase();
+    if (q) {
+      list = list.filter(
+        (h) =>
+          h.text.toLowerCase().includes(q) ||
+          (h.source || '').toLowerCase().includes(q) ||
+          (h.topic || '').toLowerCase().includes(q)
+      );
+    }
+    list = [...list].sort((a, b) => {
+      if (sortMode === 'alpha') return a.text.localeCompare(b.text, localeTag);
+      const diff = new Date(b.createdAt as any).getTime() - new Date(a.createdAt as any).getTime();
+      return sortMode === 'oldest' ? -diff : diff;
+    });
+    return list;
+  }, [allHadiths, query, sortMode, localeTag]);
 
   return (
     <PageTransition className="min-h-screen flex flex-col bg-background gradient-bg">
@@ -35,6 +61,32 @@ export default function HadithsPage() {
               <p className="text-xl text-muted-foreground max-w-2xl mx-auto font-serif">
                 {t('hadiths.subtitle')}
               </p>
+            </div>
+          </ScrollReveal>
+
+          <ScrollReveal delay="100">
+            <div className="flex flex-col sm:flex-row gap-3 mb-6 bg-card/40 p-2 rounded-3xl sm:rounded-full border border-border/40 shadow-sm glass">
+              <div className="relative flex-1">
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                <input
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  placeholder={t('search.placeholder')}
+                  className="w-full h-12 pl-11 pr-4 rounded-full bg-transparent border-none text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-0 transition-all"
+                />
+              </div>
+              <div className="hidden sm:block w-px h-6 bg-border/50 self-center" />
+              <div className="flex gap-2">
+                <select
+                  value={sortMode}
+                  onChange={(e) => setSortMode(e.target.value as SortMode)}
+                  className="flex-1 sm:w-auto h-12 px-4 rounded-full bg-muted/20 border border-transparent text-sm text-foreground focus:outline-none focus:bg-muted/40 transition-colors"
+                >
+                  <option value="newest">{t('sort.newest')}</option>
+                  <option value="oldest">{t('sort.oldest')}</option>
+                  <option value="alpha">{t('sort.alpha')}</option>
+                </select>
+              </div>
             </div>
           </ScrollReveal>
 

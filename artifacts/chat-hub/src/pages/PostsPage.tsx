@@ -7,12 +7,51 @@ import { ScrollReveal } from '@/components/ScrollReveal';
 import { useListPosts } from '@workspace/api-client-react';
 import { Link } from 'wouter';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { Loader2, Calendar, User, ArrowRight, BookOpen } from 'lucide-react';
+import { Loader2, Calendar, User, ArrowRight, BookOpen, Search } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useMemo, useState } from 'react';
+
+type SortMode = 'newest' | 'oldest' | 'alpha';
+
+const LOCALE_TAGS: Record<string, string> = { RU: 'ru', EN: 'en', AR: 'ar' };
 
 export default function PostsPage() {
-  const { t, isRtl } = useLanguage();
-  const { data: posts = [], isLoading } = useListPosts();
+  const { t, isRtl, language } = useLanguage();
+  const localeTag = LOCALE_TAGS[language] || 'en';
+  const { data: allPosts = [], isLoading } = useListPosts();
+  const [query, setQuery] = useState('');
+  const [sortMode, setSortMode] = useState<SortMode>('newest');
+  const [yearFilter, setYearFilter] = useState<string>('all');
+
+  const years = useMemo(() => {
+    const set = new Set<string>();
+    allPosts.forEach((p) => set.add(String(parseApiDate(p.createdAt).getFullYear())));
+    return Array.from(set).sort((a, b) => Number(b) - Number(a));
+  }, [allPosts]);
+
+  const currentYear = String(new Date().getFullYear());
+
+  const posts = useMemo(() => {
+    let list = allPosts;
+    const q = query.trim().toLowerCase();
+    if (q) {
+      list = list.filter(
+        (p) =>
+          p.title.toLowerCase().includes(q) ||
+          (p.excerpt || '').toLowerCase().includes(q) ||
+          (p.content || '').toLowerCase().includes(q)
+      );
+    }
+    if (yearFilter !== 'all') {
+      list = list.filter((p) => String(parseApiDate(p.createdAt).getFullYear()) === yearFilter);
+    }
+    list = [...list].sort((a, b) => {
+      if (sortMode === 'alpha') return a.title.localeCompare(b.title, localeTag);
+      const diff = parseApiDate(b.createdAt).getTime() - parseApiDate(a.createdAt).getTime();
+      return sortMode === 'oldest' ? -diff : diff;
+    });
+    return list;
+  }, [allPosts, query, yearFilter, sortMode, localeTag]);
 
   return (
     <PageTransition className="min-h-screen flex flex-col bg-background gradient-bg" dir={isRtl ? 'rtl' : 'ltr'}>
@@ -32,6 +71,43 @@ export default function PostsPage() {
               <p className="text-xl text-muted-foreground max-w-2xl mx-auto font-serif">
                 {t('posts.subtitle')}
               </p>
+            </div>
+          </ScrollReveal>
+
+          <ScrollReveal>
+            <div className="flex flex-col sm:flex-row gap-3 mb-10 bg-card/40 p-2 rounded-3xl sm:rounded-full border border-border/40 shadow-sm glass">
+              <div className="relative flex-1">
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                <input
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  placeholder={t('search.placeholder')}
+                  className="w-full h-12 pl-11 pr-4 rounded-full bg-transparent border-none text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-0 transition-all"
+                />
+              </div>
+              <div className="hidden sm:block w-px h-6 bg-border/50 self-center" />
+              <div className="flex gap-2">
+                <select
+                  value={yearFilter}
+                  onChange={(e) => setYearFilter(e.target.value)}
+                  className="flex-1 sm:w-auto h-12 px-4 rounded-full bg-muted/20 border border-transparent text-sm text-foreground focus:outline-none focus:bg-muted/40 transition-colors"
+                >
+                  <option value="all">{t('filter.allYears')}</option>
+                  {years.includes(currentYear) && <option value={currentYear}>{t('filter.thisYear')}</option>}
+                  {years.filter((y) => y !== currentYear).map((y) => (
+                    <option key={y} value={y}>{y}</option>
+                  ))}
+                </select>
+                <select
+                  value={sortMode}
+                  onChange={(e) => setSortMode(e.target.value as SortMode)}
+                  className="flex-1 sm:w-auto h-12 px-4 rounded-full bg-muted/20 border border-transparent text-sm text-foreground focus:outline-none focus:bg-muted/40 transition-colors"
+                >
+                  <option value="newest">{t('sort.newest')}</option>
+                  <option value="oldest">{t('sort.oldest')}</option>
+                  <option value="alpha">{t('sort.alpha')}</option>
+                </select>
+              </div>
             </div>
           </ScrollReveal>
 

@@ -165,19 +165,19 @@ function PostInteractions({ postId }: { postId: number }) {
   return (
     <div className="space-y-10 max-w-3xl mx-auto">
       {/* Reaction Bar */}
-      <div className="flex items-center gap-4 p-5 glass rounded-2xl border border-border/30">
+      <div className="flex items-center gap-4 p-5 glass rounded-[2rem] border border-border/40 shadow-lg">
         <motion.button
           whileTap={{ scale: 0.92 }}
           onClick={() => handleReact('like')}
-          className={`flex items-center gap-2.5 px-5 py-2.5 rounded-xl font-semibold transition-all duration-300 ${
+          className={`flex items-center gap-2.5 px-5 py-2.5 rounded-2xl font-semibold transition-all duration-300 ${
             myReaction === 'like'
-              ? 'bg-primary text-primary-foreground glow-gold-sm'
-              : 'bg-muted hover:bg-accent text-foreground hover:text-primary border border-border/50'
+              ? 'bg-primary text-primary-foreground glow-gold-sm shadow-md shadow-primary/20'
+              : 'bg-muted/50 hover:bg-muted text-foreground hover:text-primary border border-border/40'
           }`}
         >
           <ThumbsUp className={`w-4 h-4 ${myReaction === 'like' ? '' : ''}`} />
           <span>{t('post.likes')}</span>
-          <span className="bg-background/30 text-xs font-bold px-2 py-0.5 rounded-full min-w-[24px] text-center">
+          <span className="bg-background/40 text-xs font-bold px-2 py-0.5 rounded-full min-w-[24px] text-center shadow-inner">
             {likes}
           </span>
         </motion.button>
@@ -185,20 +185,20 @@ function PostInteractions({ postId }: { postId: number }) {
         <motion.button
           whileTap={{ scale: 0.92 }}
           onClick={() => handleReact('dislike')}
-          className={`flex items-center gap-2.5 px-5 py-2.5 rounded-xl font-semibold transition-all duration-300 ${
+          className={`flex items-center gap-2.5 px-5 py-2.5 rounded-2xl font-semibold transition-all duration-300 ${
             myReaction === 'dislike'
-              ? 'bg-destructive text-destructive-foreground'
-              : 'bg-muted hover:bg-accent text-foreground hover:text-destructive border border-border/50'
+              ? 'bg-destructive text-destructive-foreground shadow-md shadow-destructive/20'
+              : 'bg-muted/50 hover:bg-muted text-foreground hover:text-destructive border border-border/40'
           }`}
         >
           <ThumbsDown className="w-4 h-4" />
           <span>{t('post.dislikes')}</span>
-          <span className="bg-background/30 text-xs font-bold px-2 py-0.5 rounded-full min-w-[24px] text-center">
+          <span className="bg-background/40 text-xs font-bold px-2 py-0.5 rounded-full min-w-[24px] text-center shadow-inner">
             {dislikes}
           </span>
         </motion.button>
 
-        <div className="ml-auto flex items-center gap-2 text-muted-foreground text-sm">
+        <div className="ml-auto flex items-center gap-2 text-muted-foreground text-sm font-medium px-4 py-2 rounded-2xl bg-muted/20 border border-border/30">
           <MessageCircle className="w-4 h-4" />
           <span>{comments.length}</span>
         </div>

@@ -16,50 +16,56 @@ export function About() {
   ];
 
   return (
-    <section id="about" className="py-32 bg-background relative overflow-hidden" dir={isRtl ? 'rtl' : 'ltr'}>
-      <div className="container mx-auto px-6 max-w-6xl">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
+    <section id="about" className="py-24 md:py-32 bg-background relative overflow-hidden" dir={isRtl ? 'rtl' : 'ltr'}>
+      {/* Dynamic background glow */}
+      <div className="absolute top-1/2 left-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[100px] -translate-y-1/2 -translate-x-1/2 pointer-events-none" />
+      
+      <div className="container mx-auto px-6 max-w-6xl relative z-10">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 md:gap-24 items-center">
           <ScrollReveal>
-            <div className="relative group">
-              <div className="aspect-[4/5] max-w-md mx-auto rounded-[2rem] bg-card border border-border shadow-2xl overflow-hidden relative">
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,var(--tw-gradient-stops))] from-primary/10 via-transparent to-transparent"></div>
+            <div className="relative group max-w-md mx-auto">
+              <div className="aspect-[4/5] rounded-[2rem] sm:rounded-[3rem] glass-strong border border-border/40 shadow-2xl overflow-hidden relative">
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,var(--tw-gradient-stops))] from-primary/15 via-transparent to-transparent"></div>
                 
-                <div className="absolute inset-0 flex items-center justify-center p-12">
-                  <div className="w-48 h-48 rounded-full border border-primary/20 bg-background shadow-xl flex items-center justify-center p-2 group-hover:scale-105 transition-transform duration-700">
+                <div className="absolute inset-0 flex items-center justify-center p-8 sm:p-12">
+                  <div className="w-40 h-40 sm:w-56 sm:h-56 rounded-full border border-primary/30 bg-background/50 shadow-[0_0_40px_rgba(0,0,0,0.5)] flex items-center justify-center p-3 group-hover:scale-105 group-hover:shadow-[0_0_60px_rgba(240,160,32,0.15)] transition-all duration-700 ease-out backdrop-blur-sm">
                     <img src={logoImg} alt="Logo" className="w-full h-full object-cover rounded-full opacity-90" />
                   </div>
                 </div>
               </div>
               
-              {/* Decorative dots */}
-              <div className="absolute -z-10 -bottom-8 -left-8 w-32 h-32 bg-[radial-gradient(circle,hsl(var(--primary)/0.3)_2px,transparent_2px)] [background-size:16px_16px]"></div>
-              <div className="absolute -z-10 -top-8 -right-8 w-32 h-32 bg-[radial-gradient(circle,hsl(var(--primary)/0.3)_2px,transparent_2px)] [background-size:16px_16px]"></div>
+              {/* Decorative elements */}
+              <div className="absolute -z-10 -bottom-8 -left-8 w-32 h-32 bg-[radial-gradient(circle,hsl(var(--primary)/0.4)_2px,transparent_2px)] [background-size:16px_16px] opacity-60"></div>
+              <div className="absolute -z-10 -top-8 -right-8 w-32 h-32 bg-[radial-gradient(circle,hsl(var(--primary)/0.4)_2px,transparent_2px)] [background-size:16px_16px] opacity-60"></div>
             </div>
           </ScrollReveal>
 
           <ScrollReveal delay="100">
-            <h2 className="text-4xl md:text-5xl font-serif font-bold text-foreground mb-8">
+            <h2 className="text-4xl md:text-5xl lg:text-6xl font-serif font-bold text-foreground mb-8 tracking-tight drop-shadow-sm">
               {t('about.title')}
             </h2>
-            <div className="w-16 h-1 bg-primary mb-10 rounded-full"></div>
+            <div className="w-20 h-1 bg-gradient-to-r from-primary to-transparent mb-10 rounded-full"></div>
             
-            <p className="text-xl text-muted-foreground leading-relaxed mb-12 font-light">
+            <p className="text-lg sm:text-xl text-foreground/80 leading-relaxed mb-12 font-serif font-light drop-shadow-sm">
               {t('about.desc')}
             </p>
 
-            <ul className="space-y-6 mb-16">
+            <ul className="space-y-6 mb-14">
               {bullets.map((bullet, idx) => (
-                <li key={idx} className="flex items-center gap-4">
-                  <div className="w-8 h-8 rounded-full bg-card border border-primary/20 flex items-center justify-center flex-shrink-0 shadow-sm">
-                    <div className="w-2.5 h-2.5 bg-primary rounded-full"></div>
+                <li key={idx} className="flex items-start gap-4 group/item">
+                  <div className="mt-1 w-8 h-8 rounded-full glass border border-primary/20 flex items-center justify-center flex-shrink-0 shadow-sm group-hover/item:border-primary/50 group-hover/item:shadow-[0_0_15px_rgba(240,160,32,0.2)] transition-all duration-300">
+                    <div className="w-2 h-2 bg-primary rounded-full group-hover/item:scale-125 transition-transform duration-300"></div>
                   </div>
-                  <span className="text-lg text-foreground font-medium">{bullet}</span>
+                  <span className="text-base sm:text-lg text-muted-foreground group-hover/item:text-foreground transition-colors duration-300 leading-relaxed pt-0.5">{bullet}</span>
                 </li>
               ))}
             </ul>
 
-            <div className="p-8 bg-card border-l-4 border-primary rounded-r-2xl shadow-sm">
-              <p className="text-2xl font-serif italic text-foreground leading-snug">
+            <div className="p-6 sm:p-8 glass-strong border-l-4 border-l-primary rounded-r-3xl shadow-lg relative overflow-hidden">
+              <div className="absolute top-0 right-0 p-4 opacity-5">
+                <div className="w-24 h-24 border-4 border-primary rounded-full blur-[2px]"></div>
+              </div>
+              <p className="text-xl sm:text-2xl font-serif italic text-foreground leading-snug relative z-10">
                 {t('about.closing')}
               </p>
             </div>

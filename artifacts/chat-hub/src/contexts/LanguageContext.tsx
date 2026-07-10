@@ -13,7 +13,7 @@ const translations: Record<Language, Record<string, string>> = {
   RU: {
     // Nav
     // Site / Auth
-    'site.name': 'Мирный призыв',
+    'site.name': 'Peaceful Call',
     'auth.backHome': 'На главную',
     'auth.tagline': 'Присоединяйтесь к сообществу',
     'nav.home': 'Главная',
@@ -94,6 +94,12 @@ const translations: Record<Language, Record<string, string>> = {
     'posts.readMore': 'Читать далее',
     'posts.back': 'Назад',
     'posts.noArticles': 'Статей пока нет. Следите за обновлениями.',
+    'search.placeholder': 'Поиск...',
+    'filter.allYears': 'Все годы',
+    'filter.thisYear': 'В этом году',
+    'sort.newest': 'Сначала новые',
+    'sort.oldest': 'Сначала старые',
+    'sort.alpha': 'По алфавиту',
     'posts.by': 'Автор',
     // Comments & reactions
     'post.comments': 'Комментарии',
@@ -316,6 +322,12 @@ const translations: Record<Language, Record<string, string>> = {
     'posts.readMore': 'Read more',
     'posts.back': 'Back',
     'posts.noArticles': 'No articles yet. Check back soon.',
+    'search.placeholder': 'Search...',
+    'filter.allYears': 'All years',
+    'filter.thisYear': 'This year',
+    'sort.newest': 'Newest first',
+    'sort.oldest': 'Oldest first',
+    'sort.alpha': 'Alphabetical',
     'posts.by': 'By',
     // Comments
     'post.comments': 'Comments',
@@ -457,7 +469,7 @@ const translations: Record<Language, Record<string, string>> = {
   AR: {
     // Nav
     // Site / Auth
-    'site.name': 'الدعوة السلمية',
+    'site.name': 'Peaceful Call',
     'auth.backHome': 'العودة إلى الرئيسية',
     'auth.tagline': 'انضم إلى المجتمع',
     'nav.home': 'الرئيسية',
@@ -538,6 +550,12 @@ const translations: Record<Language, Record<string, string>> = {
     'posts.readMore': 'قراءة المزيد',
     'posts.back': 'رجوع',
     'posts.noArticles': 'لا توجد مقالات بعد. تابعنا للمزيد.',
+    'search.placeholder': 'بحث...',
+    'filter.allYears': 'كل السنوات',
+    'filter.thisYear': 'هذا العام',
+    'sort.newest': 'الأحدث أولاً',
+    'sort.oldest': 'الأقدم أولاً',
+    'sort.alpha': 'أبجدياً',
     'posts.by': 'بقلم',
     // Comments
     'post.comments': 'التعليقات',

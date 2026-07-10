@@ -156,42 +156,42 @@ export default function AdminPage() {
         </div>
       </header>
 
-      <main className="flex-grow container mx-auto px-4 sm:px-6 py-6 sm:py-8 max-w-6xl">
+      <main className="flex-grow container mx-auto px-4 sm:px-6 py-6 sm:py-8 max-w-6xl mt-14 sm:mt-16">
         <Tabs defaultValue={tabs[0]} className="w-full">
-          <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0 mb-7">
-            <TabsList className="inline-flex bg-muted/40 border border-border/40 p-1 rounded-xl gap-0.5">
+          <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0 mb-7 pb-2">
+            <TabsList className="inline-flex bg-card/60 glass-panel border border-border/40 p-1.5 rounded-2xl gap-1 min-w-max">
               {isOwner && (
-                <TabsTrigger value="content" className="rounded-lg text-xs sm:text-sm data-[state=active]:bg-card data-[state=active]:text-foreground data-[state=active]:shadow-sm whitespace-nowrap px-3 py-2 gap-1.5">
-                  <Settings className="w-3.5 h-3.5" />
+                <TabsTrigger value="content" className="rounded-xl text-xs sm:text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg whitespace-nowrap px-4 py-2.5 gap-2 transition-all">
+                  <Settings className="w-4 h-4" />
                   {t('admin.content')}
                 </TabsTrigger>
               )}
-              <TabsTrigger value="posts" className="rounded-lg text-xs sm:text-sm data-[state=active]:bg-card data-[state=active]:text-foreground data-[state=active]:shadow-sm whitespace-nowrap px-3 py-2 gap-1.5">
-                <FileText className="w-3.5 h-3.5" />
+              <TabsTrigger value="posts" className="rounded-xl text-xs sm:text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg whitespace-nowrap px-4 py-2.5 gap-2 transition-all">
+                <FileText className="w-4 h-4" />
                 {t('admin.posts')}
               </TabsTrigger>
-              <TabsTrigger value="hadiths" className="rounded-lg text-xs sm:text-sm data-[state=active]:bg-card data-[state=active]:text-foreground data-[state=active]:shadow-sm whitespace-nowrap px-3 py-2 gap-1.5">
-                <ScrollText className="w-3.5 h-3.5" />
+              <TabsTrigger value="hadiths" className="rounded-xl text-xs sm:text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg whitespace-nowrap px-4 py-2.5 gap-2 transition-all">
+                <ScrollText className="w-4 h-4" />
                 {t('admin.hadiths')}
               </TabsTrigger>
-              <TabsTrigger value="messages" className="rounded-lg text-xs sm:text-sm data-[state=active]:bg-card data-[state=active]:text-foreground data-[state=active]:shadow-sm whitespace-nowrap px-3 py-2 gap-1.5 relative">
-                <MessageCircle className="w-3.5 h-3.5" />
+              <TabsTrigger value="messages" className="rounded-xl text-xs sm:text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg whitespace-nowrap px-4 py-2.5 gap-2 relative transition-all">
+                <MessageCircle className="w-4 h-4" />
                 {t('admin.messages')}
                 {unreadCount > 0 && (
-                  <span className="absolute -top-0.5 -right-0.5 w-4 h-4 rounded-full bg-primary text-primary-foreground text-[9px] flex items-center justify-center font-bold">
+                  <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-destructive text-destructive-foreground text-[10px] flex items-center justify-center font-bold shadow-sm ring-2 ring-background">
                     {unreadCount}
                   </span>
                 )}
               </TabsTrigger>
               {isOwner && (
-                <TabsTrigger value="users" className="rounded-lg text-xs sm:text-sm data-[state=active]:bg-card data-[state=active]:text-foreground data-[state=active]:shadow-sm whitespace-nowrap px-3 py-2 gap-1.5">
-                  <Users className="w-3.5 h-3.5" />
+                <TabsTrigger value="users" className="rounded-xl text-xs sm:text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg whitespace-nowrap px-4 py-2.5 gap-2 transition-all">
+                  <Users className="w-4 h-4" />
                   {t('admin.users')}
                 </TabsTrigger>
               )}
               {isOwner && (
-                <TabsTrigger value="admins" className="rounded-lg text-xs sm:text-sm data-[state=active]:bg-card data-[state=active]:text-foreground data-[state=active]:shadow-sm whitespace-nowrap px-3 py-2 gap-1.5">
-                  <Shield className="w-3.5 h-3.5" />
+                <TabsTrigger value="admins" className="rounded-xl text-xs sm:text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg whitespace-nowrap px-4 py-2.5 gap-2 transition-all">
+                  <Shield className="w-4 h-4" />
                   {t('admin.admins')}
                 </TabsTrigger>
               )}
